@@ -67,9 +67,9 @@
       
         <tags>
             
-            <tag> autoload </tag>
-            
             <tag> composer自动引入 </tag>
+            
+            <tag> autoload </tag>
             
         </tags>
       
