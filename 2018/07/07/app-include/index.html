@@ -89,7 +89,7 @@
 
 
 
-  <meta name="keywords" content="php,laravel," />
+  <meta name="keywords" content="composer自动引入,autoload," />
 
 
 
@@ -100,18 +100,18 @@
 
 
 
-<meta name="description" content="学习心得&amp;emsp;&amp;emsp;想要真正了解一套框架，是需要花很多心思和时间的，就像想要了解一个的人。坚持源于喜欢，仅此而已！&amp;emsp;&amp;emsp;我个人的学习方法就是拿public\index.php，也就是项目的入口文件当做突破口，就当做没有任何手册。当然在此之前，个人觉得还是要有一定的框架使用经验。此学习分享纯属个人见解，不好之处欢迎批评指正!&amp;emsp;&amp;emsp;版本说明: larav">
-<meta name="keywords" content="php,laravel">
+<meta name="description" content="&amp;emsp;&amp;emsp; 再次说明：整个代码学习都是基于index.php，进行代码逐行分析。 根据报错，对照完整的源码进行文件补充。 引入composer自动载入关于composer自动载入包的安装，只要的我们的根目录下新建composer.json,并写入123&quot;require&quot; : &amp;#123; 	&quot;php&quot; : &quot;&amp;gt;=5.5.9&quot;&amp;#125; 然后执行 composer instal">
+<meta name="keywords" content="composer自动引入,autoload">
 <meta property="og:type" content="article">
-<meta property="og:title" content="laravel源码(开篇)">
-<meta property="og:url" content="http://yoursite.com/2018/07/05/summary/index.html">
+<meta property="og:title" content="Application.php的引入">
+<meta property="og:url" content="http://yoursite.com/2018/07/07/app-include/index.html">
 <meta property="og:site_name" content="草泥马拉马">
-<meta property="og:description" content="学习心得&amp;emsp;&amp;emsp;想要真正了解一套框架，是需要花很多心思和时间的，就像想要了解一个的人。坚持源于喜欢，仅此而已！&amp;emsp;&amp;emsp;我个人的学习方法就是拿public\index.php，也就是项目的入口文件当做突破口，就当做没有任何手册。当然在此之前，个人觉得还是要有一定的框架使用经验。此学习分享纯属个人见解，不好之处欢迎批评指正!&amp;emsp;&amp;emsp;版本说明: larav">
+<meta property="og:description" content="&amp;emsp;&amp;emsp; 再次说明：整个代码学习都是基于index.php，进行代码逐行分析。 根据报错，对照完整的源码进行文件补充。 引入composer自动载入关于composer自动载入包的安装，只要的我们的根目录下新建composer.json,并写入123&quot;require&quot; : &amp;#123; 	&quot;php&quot; : &quot;&amp;gt;=5.5.9&quot;&amp;#125; 然后执行 composer instal">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-07-07T08:15:08.544Z">
+<meta property="og:updated_time" content="2018-07-07T04:52:23.501Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="laravel源码(开篇)">
-<meta name="twitter:description" content="学习心得&amp;emsp;&amp;emsp;想要真正了解一套框架，是需要花很多心思和时间的，就像想要了解一个的人。坚持源于喜欢，仅此而已！&amp;emsp;&amp;emsp;我个人的学习方法就是拿public\index.php，也就是项目的入口文件当做突破口，就当做没有任何手册。当然在此之前，个人觉得还是要有一定的框架使用经验。此学习分享纯属个人见解，不好之处欢迎批评指正!&amp;emsp;&amp;emsp;版本说明: larav">
+<meta name="twitter:title" content="Application.php的引入">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp; 再次说明：整个代码学习都是基于index.php，进行代码逐行分析。 根据报错，对照完整的源码进行文件补充。 引入composer自动载入关于composer自动载入包的安装，只要的我们的根目录下新建composer.json,并写入123&quot;require&quot; : &amp;#123; 	&quot;php&quot; : &quot;&amp;gt;=5.5.9&quot;&amp;#125; 然后执行 composer instal">
 
 
 
@@ -141,13 +141,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/07/05/summary/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/07/app-include/"/>
 
 
 
 
 
-  <title>laravel源码(开篇) | 草泥马拉马</title>
+  <title>Application.php的引入 | 草泥马拉马</title>
   
 
 
@@ -285,7 +285,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/05/summary/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/07/app-include/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="mey">
@@ -302,7 +302,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">laravel源码(开篇)</h1>
+          <h1 class="post-title" itemprop="name headline">Application.php的引入</h1>
         
 
         <div class="post-meta">
@@ -314,8 +314,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-05T21:30:26+08:00">
-                2018-07-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-07T11:15:54+08:00">
+                2018-07-07
               </time>
             
 
@@ -368,7 +368,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  302
+                  362
                 </span>
               
 
@@ -384,7 +384,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  2
                 </span>
               
             </div>
@@ -405,9 +405,16 @@
       
 
       
-        <h4 id="学习心得"><a href="#学习心得" class="headerlink" title="学习心得"></a>学习心得</h4><p>&emsp;&emsp;<font color="#f56954">想要真正了解一套框架，是需要花很多心思和时间的，就像想要了解一个的人。坚持源于喜欢，仅此而已！</font><br>&emsp;&emsp;我个人的学习方法就是拿public\index.php，也就是项目的入口文件当做突破口，就当做没有任何手册。当然在此之前，个人觉得还是要有一定的框架使用经验。此学习分享纯属个人见解，不好之处欢迎批评指正!<br>&emsp;&emsp;<em>版本说明: laravel5.1, php 5.6.4</em><br><a id="more"></a><br>&emsp;&emsp; <em>index.php 从头到尾不会超过10行代码,总流程 <font color="#0099ff">创建App实例、接收request、获取route、返回response</font>，结束</em></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require</span> <span class="keyword">__DIR__</span>.<span class="string">'/../bootstrap/autoload.php'</span>;      </span><br><span class="line"></span><br><span class="line">$app = <span class="keyword">require_once</span> <span class="keyword">__DIR__</span>.<span class="string">'/../bootstrap/app.php'</span>;</span><br><span class="line"></span><br><span class="line">$kernel = $app-&gt;make(Illuminate\Contracts\Http\Kernel::class);</span><br><span class="line"></span><br><span class="line">$response = $kernel-&gt;handle(</span><br><span class="line">    $request = Illuminate\Http\Request::capture()</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">$response-&gt;send(); <span class="comment">// 发送响应</span></span><br><span class="line"></span><br><span class="line">$kernel-&gt;terminate($request, $response);</span><br></pre></td></tr></table></figure>
-<h4 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h4><p>&emsp;&emsp;准备一份laravel 源码，再准备一个自己的项目。最开始我们的项目是这样的<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">├── app 根目录</span><br><span class="line">    └── public  	</span><br><span class="line">        ├── index<span class="selector-class">.php</span>  拷贝源码</span><br><span class="line">        └── <span class="selector-class">.htaccess</span>  拷贝源码</span><br></pre></td></tr></table></figure><br>将web服务器指定到该目录下,本地执行。<font color="LightCoral" size="4">随着系统报错，故事就开始了…</font> </p>
+        <p>&emsp;&emsp; <font color="red">再次说明：整个代码学习都是基于index.php，进行代码逐行分析。 根据报错，对照完整的源码进行文件补充。</font></p>
+<h5 id="引入composer自动载入"><a href="#引入composer自动载入" class="headerlink" title="引入composer自动载入"></a>引入composer自动载入</h5><p>关于composer自动载入包的安装，只要的我们的根目录下新建composer.json,并写入<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"require" : &#123; </span><br><span class="line">	"php" : "&gt;=5.5.9"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> 然后执行 <em>composer install</em> 命令</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/****  当前文件位置 index.php   ****/</span></span><br><span class="line"><span class="keyword">require</span> <span class="keyword">__DIR__</span>.<span class="string">'/../bootstrap/autoload.php'</span>;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/****  当前文件位置 bootstrap/autoload.php  ****/</span></span><br><span class="line">define(<span class="string">'LARAVEL_START'</span>, microtime(<span class="keyword">true</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">require</span> <span class="keyword">__DIR__</span>.<span class="string">'/../vendor/autoload.php'</span>;  <span class="comment">// 引入Composer autoload</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//获取编译缓存，所有用到的类及方法的集合文件</span></span><br><span class="line"></span><br><span class="line">$compiledPath = <span class="keyword">__DIR__</span>.<span class="string">'/cache/compiled.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (file_exists($compiledPath)) &#123;    </span><br><span class="line">    <span class="keyword">require</span> $compiledPath;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>到这里,类文件的自动载入工作就算基本完成了。<br><a id="more"></a></p>
+<h5 id="引入Application-php"><a href="#引入Application-php" class="headerlink" title="引入Application.php"></a>引入Application.php</h5><p>接下来会看到的代码就是<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$app = <span class="keyword">new</span> Illuminate\Foundation\Application(</span><br><span class="line">    realpath(<span class="keyword">__DIR__</span>.<span class="string">'/../'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;首先需要创建 <em>vendor/laravel/framework/src/Illuminate/Foundation/Application.php </em>文件(建议为空类,测试自动引入是否成功)。那么通过composer自动引入Application.php？ 通过composer.json，定义路径,然后执行 <em>composer dump-autoload </em>命令。</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"autoload"</span>: &#123;</span><br><span class="line">       <span class="string">"classmap"</span>: [</span><br><span class="line">           <span class="string">"vendor/laravel/framework/src/Illuminate"</span>,</span><br><span class="line">           <span class="string">"app"</span></span><br><span class="line"></span><br><span class="line">       ],</span><br><span class="line">       <span class="string">"files"</span> : [</span><br><span class="line">       	<span class="string">"vendor/laravel/framework/src/Illuminate/Support/helpers.php"</span>,</span><br><span class="line">           <span class="string">"vendor/laravel/framework/src/Illuminate/Foundation/helpers.php"</span></span><br><span class="line">       ],</span><br><span class="line">       <span class="string">"psr-4"</span>: &#123;</span><br><span class="line">           <span class="string">"App\\"</span>: <span class="string">"app/"</span></span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>之后所有的文件载入不再做赘述,可自行参考以下资料:</p>
+<blockquote><footer><strong>PHP中的PSR规范</strong><cite><a href="https://https://www.jianshu.com/p/b33155c15343" target="_blank" rel="noopener">https://www.jianshu.com/p/b33155c15343</a></cite></footer></blockquote>
+<blockquote><footer><strong>composer文档</strong><cite><a href="https://docs.phpcomposer.com/01-basic-usage.html#Autoloading" target="_blank" rel="noopener">docs.phpcomposer.com/01-basic-usage.html#Autoloading</a></cite></footer></blockquote>
 
       
     </div>
@@ -435,9 +442,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/php/" rel="tag"><i class="fa fa-tag"></i> php</a>
+            <a href="/tags/composer自动引入/" rel="tag"><i class="fa fa-tag"></i> composer自动引入</a>
           
-            <a href="/tags/laravel/" rel="tag"><i class="fa fa-tag"></i> laravel</a>
+            <a href="/tags/autoload/" rel="tag"><i class="fa fa-tag"></i> autoload</a>
           
         </div>
       
@@ -450,14 +457,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/07/06/tree-directory/" rel="next" title="框架目录结构">
+                <i class="fa fa-chevron-left"></i> 框架目录结构
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/07/06/tree-directory/" rel="prev" title="框架目录结构">
-                框架目录结构 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/07/07/container/" rel="prev" title="容器与控制反转">
+                容器与控制反转 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -604,7 +615,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#学习心得"><span class="nav-number">1.</span> <span class="nav-text">学习心得</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#具体实现"><span class="nav-number">2.</span> <span class="nav-text">具体实现</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#引入composer自动载入"><span class="nav-number">1.</span> <span class="nav-text">引入composer自动载入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#引入Application-php"><span class="nav-number">2.</span> <span class="nav-text">引入Application.php</span></a></li></ol></div>
             
 
           </div>
