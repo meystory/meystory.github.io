@@ -108,7 +108,7 @@
 <meta property="og:site_name" content="mey">
 <meta property="og:description" content="学习心得&amp;emsp;&amp;emsp;想要真正了解一套框架，是需要花很多心思和时间的，就像想要了解一个的人。坚持源于喜欢，仅此而已！&amp;emsp;&amp;emsp;我个人的学习方法就是拿public\index.php，也就是项目的入口文件当做突破口，就当做没有任何手册。当然在此之前，个人觉得还是要有一定的框架使用经验。此学习分享纯属个人见解，不好之处欢迎批评指正!&amp;emsp;&amp;emsp;版本说明: larav">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-07-07T08:15:08.544Z">
+<meta property="og:updated_time" content="2018-07-08T05:19:13.950Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="laravel源码(开篇)">
 <meta name="twitter:description" content="学习心得&amp;emsp;&amp;emsp;想要真正了解一套框架，是需要花很多心思和时间的，就像想要了解一个的人。坚持源于喜欢，仅此而已！&amp;emsp;&amp;emsp;我个人的学习方法就是拿public\index.php，也就是项目的入口文件当做突破口，就当做没有任何手册。当然在此之前，个人觉得还是要有一定的框架使用经验。此学习分享纯属个人见解，不好之处欢迎批评指正!&amp;emsp;&amp;emsp;版本说明: larav">
@@ -416,7 +416,7 @@
       
 
       
-        <h4 id="学习心得"><a href="#学习心得" class="headerlink" title="学习心得"></a>学习心得</h4><p>&emsp;&emsp;<font color="#f56954">想要真正了解一套框架，是需要花很多心思和时间的，就像想要了解一个的人。坚持源于喜欢，仅此而已！</font><br>&emsp;&emsp;我个人的学习方法就是拿public\index.php，也就是项目的入口文件当做突破口，就当做没有任何手册。当然在此之前，个人觉得还是要有一定的框架使用经验。此学习分享纯属个人见解，不好之处欢迎批评指正!<br>&emsp;&emsp;<em>版本说明: laravel5.1, php 5.6.4</em><br><a id="more"></a><br>&emsp;&emsp; <em>index.php 从头到尾不会超过10行代码,总流程 <font color="#0099ff">创建App实例、接收request、获取route、返回response</font>，结束</em></p>
+        <h4 id="学习心得"><a href="#学习心得" class="headerlink" title="学习心得"></a>学习心得</h4><p>&emsp;&emsp;想要真正了解一套框架，是需要花很多心思和时间的，就像想要了解一个的人。<font>坚持源于喜欢，仅此而已！</font><br>&emsp;&emsp;我个人的学习方法就是拿public\index.php，也就是项目的入口文件当做突破口，就当做没有任何手册。当然在此之前，个人觉得还是要有一定的框架使用经验。此学习分享纯属个人见解，不好之处欢迎批评指正!<br>&emsp;&emsp;<em>版本说明: laravel5.1, php 5.6.4</em><br><a id="more"></a><br>&emsp;&emsp; <em>index.php 从头到尾不会超过10行代码,总流程 <font color="#0099ff">创建App实例、接收request、获取route、返回response</font>，结束</em></p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require</span> <span class="keyword">__DIR__</span>.<span class="string">'/../bootstrap/autoload.php'</span>;      </span><br><span class="line"></span><br><span class="line">$app = <span class="keyword">require_once</span> <span class="keyword">__DIR__</span>.<span class="string">'/../bootstrap/app.php'</span>;</span><br><span class="line"></span><br><span class="line">$kernel = $app-&gt;make(Illuminate\Contracts\Http\Kernel::class);</span><br><span class="line"></span><br><span class="line">$response = $kernel-&gt;handle(</span><br><span class="line">    $request = Illuminate\Http\Request::capture()</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">$response-&gt;send(); <span class="comment">// 发送响应</span></span><br><span class="line"></span><br><span class="line">$kernel-&gt;terminate($request, $response);</span><br></pre></td></tr></table></figure>
 <h4 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h4><p>&emsp;&emsp;准备一份laravel 源码，再准备一个自己的项目。最开始我们的项目是这样的<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">├── app 根目录</span><br><span class="line">    └── public  	</span><br><span class="line">        ├── index<span class="selector-class">.php</span>  拷贝源码</span><br><span class="line">        └── <span class="selector-class">.htaccess</span>  拷贝源码</span><br></pre></td></tr></table></figure><br>将web服务器指定到该目录下,本地执行。<font color="LightCoral" size="4">随着系统报错，故事就开始了…</font> </p>
 
@@ -550,7 +550,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -572,7 +572,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -649,7 +649,7 @@
     
       <span class="post-meta-item-text">站点字数统计&#58;</span>
     
-    <span title="站点字数统计">4.0k</span>
+    <span title="站点字数统计">6.4k</span>
   
 </div>
 

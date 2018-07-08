@@ -89,7 +89,7 @@
 
 
 
-  <meta name="keywords" content="laravel目录结构," />
+  <meta name="keywords" content="kernel," />
 
 
 
@@ -100,18 +100,18 @@
 
 
 
-<meta name="description" content="&amp;emsp;&amp;emsp;laravel 框架按最简单的目录结构理解就是 核心文件目录 和 插件文件目录。假设这所有的目录结构，最开始我们是并不清楚的，然后随着index.php的运行,报错的出现与不断解决，整个目录结构及用途就会一点点慢慢清晰起来。&amp;emsp;&amp;emsp;当运行，第一个报错肯定是 bootstrap/autoload.php  文件不存在, 然后我们就按照另一份源码缺哈补哈。随着这">
-<meta name="keywords" content="laravel目录结构">
+<meta name="description" content="&amp;emsp;&amp;emsp;通过容器获取kernel实例,将request类传入kernel的handle方法,最终返回响应而这是一个极其漫长的过程,因为这个过程将整个框架所需的服务、文件全部初始化完成。 kernel的handle方法随着这个方法执行完毕,整体框架的流程就完成90%了1234567891011121314151617181920212223242526272829//index.ph">
+<meta name="keywords" content="kernel">
 <meta property="og:type" content="article">
-<meta property="og:title" content="框架目录结构">
-<meta property="og:url" content="http://yoursite.com/2018/07/06/tree-directory/index.html">
+<meta property="og:title" content="kernel类handle方法">
+<meta property="og:url" content="http://yoursite.com/2018/07/08/kernel-handle/index.html">
 <meta property="og:site_name" content="mey">
-<meta property="og:description" content="&amp;emsp;&amp;emsp;laravel 框架按最简单的目录结构理解就是 核心文件目录 和 插件文件目录。假设这所有的目录结构，最开始我们是并不清楚的，然后随着index.php的运行,报错的出现与不断解决，整个目录结构及用途就会一点点慢慢清晰起来。&amp;emsp;&amp;emsp;当运行，第一个报错肯定是 bootstrap/autoload.php  文件不存在, 然后我们就按照另一份源码缺哈补哈。随着这">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;通过容器获取kernel实例,将request类传入kernel的handle方法,最终返回响应而这是一个极其漫长的过程,因为这个过程将整个框架所需的服务、文件全部初始化完成。 kernel的handle方法随着这个方法执行完毕,整体框架的流程就完成90%了1234567891011121314151617181920212223242526272829//index.ph">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-07-08T06:23:18.077Z">
+<meta property="og:updated_time" content="2018-07-08T06:48:15.428Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="框架目录结构">
-<meta name="twitter:description" content="&amp;emsp;&amp;emsp;laravel 框架按最简单的目录结构理解就是 核心文件目录 和 插件文件目录。假设这所有的目录结构，最开始我们是并不清楚的，然后随着index.php的运行,报错的出现与不断解决，整个目录结构及用途就会一点点慢慢清晰起来。&amp;emsp;&amp;emsp;当运行，第一个报错肯定是 bootstrap/autoload.php  文件不存在, 然后我们就按照另一份源码缺哈补哈。随着这">
+<meta name="twitter:title" content="kernel类handle方法">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;通过容器获取kernel实例,将request类传入kernel的handle方法,最终返回响应而这是一个极其漫长的过程,因为这个过程将整个框架所需的服务、文件全部初始化完成。 kernel的handle方法随着这个方法执行完毕,整体框架的流程就完成90%了1234567891011121314151617181920212223242526272829//index.ph">
 
 
 
@@ -141,13 +141,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/07/06/tree-directory/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/08/kernel-handle/"/>
 
 
 
 
 
-  <title>框架目录结构 | mey</title>
+  <title>kernel类handle方法 | mey</title>
   
 
 
@@ -285,7 +285,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/06/tree-directory/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/08/kernel-handle/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="mey">
@@ -302,7 +302,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">框架目录结构</h1>
+          <h1 class="post-title" itemprop="name headline">kernel类handle方法</h1>
         
 
         <div class="post-meta">
@@ -314,8 +314,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-06T10:15:55+08:00">
-                2018-07-06
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-08T14:28:12+08:00">
+                2018-07-08
               </time>
             
 
@@ -354,7 +354,7 @@
 
           
           
-             <span id="/2018/07/06/tree-directory/" class="leancloud_visitors" data-flag-title="框架目录结构">
+             <span id="/2018/07/08/kernel-handle/" class="leancloud_visitors" data-flag-title="kernel类handle方法">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -379,7 +379,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,262
+                  324
                 </span>
               
 
@@ -395,7 +395,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  2
                 </span>
               
             </div>
@@ -416,10 +416,9 @@
       
 
       
-        <p>&emsp;&emsp;laravel 框架按最简单的目录结构理解就是 <strong>核心文件目录</strong> 和 <strong>插件文件目录</strong>。假设这所有的目录结构，最开始我们是并不清楚的，然后随着index.php的运行,报错的出现与不断解决，整个目录结构及用途就会一点点慢慢清晰起来。<br>&emsp;&emsp;当运行，第一个报错肯定是 bootstrap/autoload.php  文件不存在, 然后我们就按照另一份源码缺哈补哈。随着这个报错的解决，自然就会清楚，app\bootstrap文件夹，到目前为止有提供composer 自动载入类的作用。下面是整个框架的目录结构图<br><a id="more"></a></p>
-<h4 id="核心文件目录"><a href="#核心文件目录" class="headerlink" title="核心文件目录"></a>核心文件目录</h4><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">├── laravel 根目录</span><br><span class="line">	├── app</span><br><span class="line">	│   ├──<span class="built_in"> Console	</span>		artisan控制台</span><br><span class="line">	│   ├── Events			事件注册</span><br><span class="line">	│   ├── Exceptions		异常处理</span><br><span class="line">	│   ├── Http			http处理</span><br><span class="line">	│   |   ├── Controllers  	控制器</span><br><span class="line">	│   |   ├── Middleware  	中间件</span><br><span class="line">	|   |   ├── Requests 		表单请求类FormRequest,用于表单数据快捷验证</span><br><span class="line">	│   |   └── routes     		路由文件</span><br><span class="line">	│   ├── Jobs			队列任务</span><br><span class="line">	│   ├── Listeners		事件监听</span><br><span class="line">	│   ├── Policies		用户操作授权控制</span><br><span class="line">	│   └── Providers		基本服务提供类</span><br><span class="line">	│   └── User.php 		默认用户认证模型</span><br><span class="line">	|</span><br><span class="line">	├── bootstrap  			项目启动文件</span><br><span class="line">	│   ├── cache  			启动文件缓存，主要是services.php,记录服务提供类的即时、延迟、特定加载信息</span><br><span class="line">	│   ├── app.php 		创建整个项目Application类实例</span><br><span class="line">	│   └── autoload 		引入composer自动载入类</span><br><span class="line">	|</span><br><span class="line">	├──<span class="built_in"> config </span> 			配置文件</span><br><span class="line">	|</span><br><span class="line">	├── database			数据库迁移</span><br><span class="line">	│   </span><br><span class="line">	├── public			公共资源目录，包含入口文件及资源文件，js、css、image等</span><br><span class="line">	|</span><br><span class="line">	├── resources 			视图文件</span><br><span class="line">	│   </span><br><span class="line">	├── storage</span><br><span class="line">	│   ├── app 			其他文件存储目录</span><br><span class="line">	│   ├── framework</span><br><span class="line">	|   |   ├── cache 		文件缓存目录</span><br><span class="line">	|   |   ├── sessions 		会话缓存目录</span><br><span class="line">	|   |   └── views		视图缓存目录</span><br><span class="line">	│   └── logs 			日志文件默认存储目录</span><br><span class="line">	├── vendor 			拓展文件目录</span><br><span class="line">	└── .env 			环境变量配置 		</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h4 id="拓展文件目录"><a href="#拓展文件目录" class="headerlink" title="拓展文件目录"></a>拓展文件目录</h4><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">├── laravel/vendor</span><br><span class="line">	├── bin     	   		作为php-parse,phpunit,phpspec,psysh 指令执行目录</span><br><span class="line">	├── classpreloader		用于生成包含特定用例所需的所有类的单个PHP脚本,不依赖于自动加载</span><br><span class="line">	├── composer			<span class="string">"composer自动加载类"</span></span><br><span class="line">	├── danielstjules  		具有多字节支持的字符串操作库,如strtoupper('fòôbàř');</span><br><span class="line">	├── dnoegel      		dnoegel/php-xdg-base-dir, XDG目录规范</span><br><span class="line">	├── doctrine			www.doctrine-project.org 用于数据库迁移schema生成,数据字段修改</span><br><span class="line">	├── fzaninotto			fzaninotto/faker 用于生成测试数据的PHP库</span><br><span class="line">	├── hamcrest			一个匹配Hamcrest的官方PHP端口的拓展，具体用途不详</span><br><span class="line">	├── jakub-onderka		控制台高亮PHP代码</span><br><span class="line">	├── jeremeamia			用于序列化闭包和匿名函数的PHP库。</span><br><span class="line">	├── laravel 			<span class="string">"最核心拓展"</span></span><br><span class="line">	├── league   			<span class="string">"league/flysystem 本地磁盘文件读写驱动"</span></span><br><span class="line">	├── mockery	   	     	PHP模拟对象框架,用于PHP单元测试</span><br><span class="line">	├── monolog	   	     	<span class="string">"php日志记录库,可以日志发送至files, sockets, inboxes, databases等"</span></span><br><span class="line">	├── mtdowling			PHP cron表达式解析器</span><br><span class="line">	├── nestbot		    	nesbot/carbon 时间处理插件</span><br><span class="line">	├── nikic	    		包名nikic/php-parser。 PHP词法分析、语法分析，生成一颗抽象语法树。</span><br><span class="line">	|	           	     	PHP内置函数token_get_all()可进行词法分析。在视图编译会用到</span><br><span class="line">	├── paragonie</span><br><span class="line">	├── phpdocumentor		<span class="string">"paragonie/random_compat 安全码生成库,如默认session_id 生成"</span></span><br><span class="line">	├── phpspec	      	 	可以按PSR标准创建文件夹结构(我目前所知)</span><br><span class="line">	├── phpunit	    	 	php单元测试 </span><br><span class="line">	├── predis   			redis拓展</span><br><span class="line">	├── psr   	         	<span class="string">"psr/log ,定制日志记录接口规范"</span></span><br><span class="line">	├── psys   	          	psy/psysh php交互式控制台, 可以写php代码直接运行</span><br><span class="line">	├── sebastian   	  	不知道不明了 (°ー°〃)</span><br><span class="line">	├── swiftmailer  	  	Mail 邮件发送插件</span><br><span class="line">	├── symfony  	  	 	<span class="string">"symfony全家桶,在vender/laravel中require 。 重要插件库"</span></span><br><span class="line">	├── vlucas  	 	 	<span class="string">"vlucas/phpdotenv 用于ENV环境变量的读取及设置"</span></span><br><span class="line">	└── webmozart   	   	通过Assert来测试方法的输入和输出,有点类似于<span class="keyword">Node</span>.<span class="title">js</span> 的Assert</span><br></pre></td></tr></table></figure>
-<h5 id="framework目录"><a href="#framework目录" class="headerlink" title="framework目录"></a>framework目录</h5><p><font color="#f56954" size="3">/vendor/laravel/framework 可以说是整个laravel框架最最核心的目录,vendor目录下所有其他拓展基本都是为其服务<font><br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">├── laravel/vendor/laravel/framework</span><br><span class="line">	├── composer.json  	   	'记录了核心常用插件使用信息'</span><br><span class="line">	└── src  	遵循PSR-4目录规范</span><br><span class="line">	    └── Illuminate	   		    </span><br><span class="line">	        ├── Auth           		用户认证，Access 、Password、AuthManager</span><br><span class="line">	        ├── Broadcasting  		广播(没使用过)</span><br><span class="line">	        ├── Bus         	 	任务分配(没使用过)</span><br><span class="line">	        ├── <span class="keyword">Cache</span>      	  		缓存操作类</span><br><span class="line">	        ├── Config        	  	配置操作类</span><br><span class="line">	        ├── Console	        	控制台</span><br><span class="line">	        ├── <span class="keyword">Container</span>	  		<span class="string">'容器(实现Ioc),框架核心设计思想之一'</span></span><br><span class="line">	        ├── Contracts	  		<span class="string">'契约类(interface),定义app的几乎所有接口规范'</span></span><br><span class="line">	        ├── Cookie      	  	响应头Cookie</span><br><span class="line">	        ├── <span class="keyword">Database</span> 	  		数据库</span><br><span class="line">	        ├── Enctyption    		加密，解密类,如用于session_id加密和解密</span><br><span class="line">	        ├── <span class="keyword">Events</span>      		事件处理</span><br><span class="line">	        ├── Filesystem	  		文件处理</span><br><span class="line">	        ├── Foundation	  		<span class="string">'基本文件类,如Application类'</span></span><br><span class="line">	        ├── Hashing       		<span class="keyword">hash</span>加密类</span><br><span class="line">	        ├── <span class="keyword">Http</span>	      		request,response 处理    	  		</span><br><span class="line">	        ├── <span class="keyword">log</span>       			<span class="keyword">Log</span>\Write类</span><br><span class="line">	        ├── Mail    			邮件处理</span><br><span class="line">	        ├── Pagination	  		分页</span><br><span class="line">	        ├── Pipenation	  		<span class="string">'管道类,核心设计思想之一，主要用于middleware处理'</span></span><br><span class="line">	        ├── Queue   	  		任务队列</span><br><span class="line">	        ├── Redis   	  		<span class="string">'Redis操作，底层默认是必须安装 predis插件的'</span></span><br><span class="line">	        ├── Routing   	  		路由</span><br><span class="line">	        ├── <span class="keyword">Session</span>   	  		会话</span><br><span class="line">	        ├── Support  	  		其他帮助类,如帮助函数,视图错误信息处理</span><br><span class="line">	        ├── <span class="keyword">Translation</span>   		验证信息转换,需要resources/lang 语言包</span><br><span class="line">	        ├── <span class="keyword">Validation</span>    		数据验证类</span><br><span class="line">	        └── <span class="keyword">View</span>      			视图处理，模板编译</span><br><span class="line">	</span><br></pre></td></tr></table></figure></font></font></p>
+        <p>&emsp;&emsp;通过容器获取kernel实例,将request类传入kernel的handle方法,最终返回响应而这是一个极其漫长的过程,因为这个过程将整个框架所需的服务、文件全部初始化完成。</p>
+<h4 id="kernel的handle方法"><a href="#kernel的handle方法" class="headerlink" title="kernel的handle方法"></a>kernel的handle方法</h4><p>随着这个方法执行完毕,整体框架的流程就完成90%了<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//index.php</span></span><br><span class="line">$kernel = $app-&gt;make(Illuminate\Contracts\Http\Kernel::class);</span><br><span class="line">$response = $kernel-&gt;handle(</span><br><span class="line">    $request = Illuminate\Http\Request::capture()</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">//kernel的handle方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">handle</span><span class="params">($request)</span></span></span><br><span class="line"><span class="function"></span>&#123;	<span class="comment">//在此过程中，所有异常都会通过Exceptions 直接抛出</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        $request-&gt;enableHttpMethodParameterOverride();</span><br><span class="line">        <span class="comment">//通过发送请求，经路由处理，最终返回response</span></span><br><span class="line">        $response = <span class="keyword">$this</span>-&gt;sendRequestThroughRouter($request);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (<span class="keyword">Exception</span> $e) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;reportException($e);</span><br><span class="line"></span><br><span class="line">        $response = <span class="keyword">$this</span>-&gt;renderException($request, $e);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable $e) &#123;</span><br><span class="line">        $e = <span class="keyword">new</span> FatalThrowableError($e);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;reportException($e);</span><br><span class="line"></span><br><span class="line">        $response = <span class="keyword">$this</span>-&gt;renderException($request, $e);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 触发'kernel.handled'事件listener,如果存在的话</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;app[<span class="string">'events'</span>]-&gt;fire(<span class="string">'kernel.handled'</span>, [$request, $response]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> $response;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="sendRequestThroughRouter"><a href="#sendRequestThroughRouter" class="headerlink" title="sendRequestThroughRouter"></a>sendRequestThroughRouter</h4><p>重中之重的方法，分两个部分说<br>① $this-&gt;bootstrap();<br>① Pipeline管道;<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">sendRequestThroughRouter</span><span class="params">($request)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;app-&gt;instance(<span class="string">'request'</span>, $request); <span class="comment">//Reuqest 实例加入instances 数组中</span></span><br><span class="line"></span><br><span class="line">    Facade::clearResolvedInstance(<span class="string">'request'</span>); </span><br><span class="line"></span><br><span class="line">    <span class="keyword">$this</span>-&gt;bootstrap(); <span class="comment">//关键方法,几乎加载所有服务和文件</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 管道类处理request </span></span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">new</span> Pipeline(<span class="keyword">$this</span>-&gt;app))</span><br><span class="line">                -&gt;send($request)</span><br><span class="line">                -&gt;through(<span class="keyword">$this</span>-&gt;app-&gt;shouldSkipMiddleware() ? [] : <span class="keyword">$this</span>-&gt;middleware)</span><br><span class="line">                -&gt;then(<span class="keyword">$this</span>-&gt;dispatchToRouter());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -447,7 +446,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/laravel目录结构/" rel="tag"><i class="fa fa-tag"></i> laravel目录结构</a>
+            <a href="/tags/kernel/" rel="tag"><i class="fa fa-tag"></i> kernel</a>
           
         </div>
       
@@ -460,8 +459,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/05/summary/" rel="next" title="laravel源码(开篇)">
-                <i class="fa fa-chevron-left"></i> laravel源码(开篇)
+              <a href="/2018/07/08/request-instance/" rel="next" title="request实例">
+                <i class="fa fa-chevron-left"></i> request实例
               </a>
             
           </div>
@@ -470,8 +469,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/07/07/app-require/" rel="prev" title="Application.php的引入">
-                Application.php的引入 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/07/08/bootstrap/" rel="prev" title="bootstrap所有服务">
+                bootstrap所有服务 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -618,7 +617,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#核心文件目录"><span class="nav-number">1.</span> <span class="nav-text">核心文件目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#拓展文件目录"><span class="nav-number">2.</span> <span class="nav-text">拓展文件目录</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#framework目录"><span class="nav-number">2.1.</span> <span class="nav-text">framework目录</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#kernel的handle方法"><span class="nav-number">1.</span> <span class="nav-text">kernel的handle方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sendRequestThroughRouter"><span class="nav-number">2.</span> <span class="nav-text">sendRequestThroughRouter</span></a></li></ol></div>
             
 
           </div>
