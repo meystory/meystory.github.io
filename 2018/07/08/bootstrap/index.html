@@ -89,7 +89,7 @@
 
 
 
-  <meta name="keywords" content="bootstrap," />
+  <meta name="keywords" content="bootstrap,bootProviders,RouteServiceProvider," />
 
 
 
@@ -101,14 +101,14 @@
 
 
 <meta name="description" content="&amp;emsp;&amp;emsp;bootstrap是整个框架的引导,加载了必须的服务，文件等。 bootstrap12345678910111213141516protected $bootstrappers = [    &apos;Illuminate\Foundation\Bootstrap\DetectEnvironment&apos;, //env环境变量处理类    &apos;Illuminate\Foundation\">
-<meta name="keywords" content="bootstrap">
+<meta name="keywords" content="bootstrap,bootProviders,RouteServiceProvider">
 <meta property="og:type" content="article">
 <meta property="og:title" content="bootstrap所有服务">
 <meta property="og:url" content="http://yoursite.com/2018/07/08/bootstrap/index.html">
 <meta property="og:site_name" content="mey">
 <meta property="og:description" content="&amp;emsp;&amp;emsp;bootstrap是整个框架的引导,加载了必须的服务，文件等。 bootstrap12345678910111213141516protected $bootstrappers = [    &apos;Illuminate\Foundation\Bootstrap\DetectEnvironment&apos;, //env环境变量处理类    &apos;Illuminate\Foundation\">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-07-08T14:25:55.676Z">
+<meta property="og:updated_time" content="2018-07-09T14:47:38.571Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="bootstrap所有服务">
 <meta name="twitter:description" content="&amp;emsp;&amp;emsp;bootstrap是整个框架的引导,加载了必须的服务，文件等。 bootstrap12345678910111213141516protected $bootstrappers = [    &apos;Illuminate\Foundation\Bootstrap\DetectEnvironment&apos;, //env环境变量处理类    &apos;Illuminate\Foundation\">
@@ -368,7 +368,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,202
+                  1,371
                 </span>
               
 
@@ -384,7 +384,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  6
+                  7
                 </span>
               
             </div>
@@ -415,6 +415,7 @@
 <h4 id="HandleExceptions"><a href="#HandleExceptions" class="headerlink" title="HandleExceptions"></a>HandleExceptions</h4><p>自定义异常处理Handler<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">bootstrap</span><span class="params">(Application $app)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;app = $app;</span><br><span class="line"></span><br><span class="line">    error_reporting(<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line">    set_error_handler([<span class="keyword">$this</span>, <span class="string">'handleError'</span>]); <span class="comment">// 错误处理</span></span><br><span class="line"></span><br><span class="line">    set_exception_handler([<span class="keyword">$this</span>, <span class="string">'handleException'</span>]); <span class="comment">//抛出异常处理</span></span><br><span class="line"></span><br><span class="line">    register_shutdown_function([<span class="keyword">$this</span>, <span class="string">'handleShutdown'</span>]); <span class="comment">//程序异常终止处理</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (! $app-&gt;environment(<span class="string">'testing'</span>)) &#123;</span><br><span class="line">        ini_set(<span class="string">'display_errors'</span>, <span class="string">'Off'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h4 id="RegisterFacades"><a href="#RegisterFacades" class="headerlink" title="RegisterFacades"></a>RegisterFacades</h4><p>注册门面类 ,通过class_alias 为一个类创建别名<br><blockquote><footer><strong>class_alias</strong><cite><a href="http://php.net/manual/zh/function.class-alias.php" target="_blank" rel="noopener">php.net/manual/zh/function.class-alias.php</a></cite></footer></blockquote><br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">bootstrap</span><span class="params">(Application $app)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Facade::clearResolvedInstances();</span><br><span class="line"></span><br><span class="line">    Facade::setFacadeApplication($app); <span class="comment">//为Facede 注入aPP实例</span></span><br><span class="line">   </span><br><span class="line">    AliasLoader::getInstance($app-&gt;make(<span class="string">'config'</span>)-&gt;get(<span class="string">'app.aliases'</span>))-&gt;register();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//执行</span></span><br><span class="line">  spl_autoload_register([<span class="keyword">$this</span>, <span class="string">'load'</span>], <span class="keyword">true</span>, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">load</span><span class="params">($alias)</span></span></span><br><span class="line"><span class="function"> </span>&#123;   </span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;aliases[$alias])) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> class_alias(<span class="keyword">$this</span>-&gt;aliases[$alias], $alias);<span class="comment">//门面类实现方式</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h4 id="RegisterProviders"><a href="#RegisterProviders" class="headerlink" title="RegisterProviders"></a>RegisterProviders</h4><p>读取config配置中的app.providers,对数组中所有进行注册<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">bootstrap</span><span class="params">(Application $app)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $app-&gt;registerConfiguredProviders();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// app类</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">registerConfiguredProviders</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">	<span class="comment">//读取bootstrap/cache/services.json缓存</span></span><br><span class="line">    $manifestPath = <span class="keyword">$this</span>-&gt;getCachedServicesPath();</span><br><span class="line">    (<span class="keyword">new</span> ProviderRepository(<span class="keyword">$this</span>, <span class="keyword">new</span> Filesystem, $manifestPath))</span><br><span class="line">                -&gt;load(<span class="keyword">$this</span>-&gt;config[<span class="string">'app.providers'</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// ProviderRepository</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">load</span><span class="params">(array $providers)</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">	<span class="comment">//获取服务注册清单</span></span><br><span class="line">    $manifest = <span class="keyword">$this</span>-&gt;loadManifest();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;shouldRecompile($manifest, $providers)) &#123;</span><br><span class="line">        $manifest = <span class="keyword">$this</span>-&gt;compileManifest($providers);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//触发加载的服务</span></span><br><span class="line">    <span class="keyword">foreach</span> ($manifest[<span class="string">'when'</span>] <span class="keyword">as</span> $provider =&gt; $events) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;registerLoadEvents($provider, $events);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">foreach</span> ($manifest[<span class="string">'eager'</span>] <span class="keyword">as</span> $provider) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;app-&gt;register(<span class="keyword">$this</span>-&gt;createProvider($provider)); <span class="comment">// 注册时,写入fire 记录</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//延迟加载的服务</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;app-&gt;addDeferredServices($manifest[<span class="string">'deferred'</span>]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="BootProviders"><a href="#BootProviders" class="headerlink" title="BootProviders"></a>BootProviders</h4><p>启用所有ServerProvider的boot方法。这块的关注点在于RouteServiceProvider<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">boot</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;booted) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//调用booting中 class 的回调</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;fireAppCallbacks(<span class="keyword">$this</span>-&gt;bootingCallbacks);</span><br><span class="line">    <span class="comment">//过程极度漫长，尤其是routeServiceProvicer</span></span><br><span class="line">    array_walk(<span class="keyword">$this</span>-&gt;serviceProviders, <span class="function"><span class="keyword">function</span> <span class="params">($p)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;bootProvider($p);</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">$this</span>-&gt;booted = <span class="keyword">true</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">$this</span>-&gt;fireAppCallbacks(<span class="keyword">$this</span>-&gt;bootedCallbacks);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">bootProvider</span><span class="params">(ServiceProvider $provider)</span></span></span><br><span class="line"><span class="function"></span>&#123;   </span><br><span class="line">    <span class="comment">//如果serviceProvider 存在boot方法, 则执行其boot方法</span></span><br><span class="line">    <span class="comment">//(通过APP\providers\ class的boot执行 parent::boot() ,即foundation\support\providers)</span></span><br><span class="line">    <span class="keyword">if</span> (method_exists($provider, <span class="string">'boot'</span>)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;call([$provider, <span class="string">'boot'</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>RouteServiceProvider最终会在map方法进行路由载入<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">map</span><span class="params">(Router $router)</span></span></span><br><span class="line"><span class="function"></span>&#123;   </span><br><span class="line">    $router-&gt;group([<span class="string">'namespace'</span> =&gt; <span class="keyword">$this</span>-&gt;namespace], <span class="function"><span class="keyword">function</span> <span class="params">($router)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">require</span> app_path(<span class="string">'Http/routes.php'</span>); <span class="comment">//app/Http/routes.php</span></span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -444,6 +445,10 @@
           
             <a href="/tags/bootstrap/" rel="tag"><i class="fa fa-tag"></i> bootstrap</a>
           
+            <a href="/tags/bootProviders/" rel="tag"><i class="fa fa-tag"></i> bootProviders</a>
+          
+            <a href="/tags/RouteServiceProvider/" rel="tag"><i class="fa fa-tag"></i> RouteServiceProvider</a>
+          
         </div>
       
 
@@ -464,6 +469,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/09/pipeline/" rel="prev" title="pipeline管道">
+                pipeline管道 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -544,7 +553,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -566,7 +575,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -609,7 +618,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#bootstrap"><span class="nav-number">1.</span> <span class="nav-text">bootstrap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bootstrapWith"><span class="nav-number">2.</span> <span class="nav-text">bootstrapWith</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DetectEnvironment"><span class="nav-number">3.</span> <span class="nav-text">DetectEnvironment</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LoadConfiguration"><span class="nav-number">4.</span> <span class="nav-text">LoadConfiguration</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ConfigureLogging"><span class="nav-number">5.</span> <span class="nav-text">ConfigureLogging</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HandleExceptions"><span class="nav-number">6.</span> <span class="nav-text">HandleExceptions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RegisterFacades"><span class="nav-number">7.</span> <span class="nav-text">RegisterFacades</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RegisterProviders"><span class="nav-number">8.</span> <span class="nav-text">RegisterProviders</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#bootstrap"><span class="nav-number">1.</span> <span class="nav-text">bootstrap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bootstrapWith"><span class="nav-number">2.</span> <span class="nav-text">bootstrapWith</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DetectEnvironment"><span class="nav-number">3.</span> <span class="nav-text">DetectEnvironment</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LoadConfiguration"><span class="nav-number">4.</span> <span class="nav-text">LoadConfiguration</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ConfigureLogging"><span class="nav-number">5.</span> <span class="nav-text">ConfigureLogging</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HandleExceptions"><span class="nav-number">6.</span> <span class="nav-text">HandleExceptions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RegisterFacades"><span class="nav-number">7.</span> <span class="nav-text">RegisterFacades</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RegisterProviders"><span class="nav-number">8.</span> <span class="nav-text">RegisterProviders</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BootProviders"><span class="nav-number">9.</span> <span class="nav-text">BootProviders</span></a></li></ol></div>
             
 
           </div>
@@ -643,7 +652,7 @@
     
       <span class="post-meta-item-text">站点字数统计&#58;</span>
     
-    <span title="站点字数统计">6.4k</span>
+    <span title="站点字数统计">8.9k</span>
   
 </div>
 

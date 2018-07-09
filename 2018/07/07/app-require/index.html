@@ -108,7 +108,7 @@
 <meta property="og:site_name" content="mey">
 <meta property="og:description" content="&amp;emsp;&amp;emsp; 再次说明：整个代码学习都是基于index.php，进行代码逐行分析。 根据报错，对照完整的源码进行文件补充。 引入composer自动载入关于composer自动载入包的安装，只要的我们的根目录下新建composer.json,并写入123&quot;require&quot; : &amp;#123; 	&quot;php&quot; : &quot;&amp;gt;=5.5.9&quot;&amp;#125; 然后执行 composer instal">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-07-07T04:52:23.501Z">
+<meta property="og:updated_time" content="2018-07-09T08:33:38.631Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Application.php的引入">
 <meta name="twitter:description" content="&amp;emsp;&amp;emsp; 再次说明：整个代码学习都是基于index.php，进行代码逐行分析。 根据报错，对照完整的源码进行文件补充。 引入composer自动载入关于composer自动载入包的安装，只要的我们的根目录下新建composer.json,并写入123&quot;require&quot; : &amp;#123; 	&quot;php&quot; : &quot;&amp;gt;=5.5.9&quot;&amp;#125; 然后执行 composer instal">
@@ -368,7 +368,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  362
+                  361
                 </span>
               
 
@@ -413,7 +413,7 @@
 <p>&emsp;&emsp;首先需要创建 <em>vendor/laravel/framework/src/Illuminate/Foundation/Application.php </em>文件(建议为空类,测试自动引入是否成功)。那么通过composer自动引入Application.php？ 通过composer.json，定义路径,然后执行 <em>composer dump-autoload </em>命令。</p>
 <figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"autoload"</span>: &#123;</span><br><span class="line">       <span class="string">"classmap"</span>: [</span><br><span class="line">           <span class="string">"vendor/laravel/framework/src/Illuminate"</span>,</span><br><span class="line">           <span class="string">"app"</span></span><br><span class="line"></span><br><span class="line">       ],</span><br><span class="line">       <span class="string">"files"</span> : [</span><br><span class="line">       	<span class="string">"vendor/laravel/framework/src/Illuminate/Support/helpers.php"</span>,</span><br><span class="line">           <span class="string">"vendor/laravel/framework/src/Illuminate/Foundation/helpers.php"</span></span><br><span class="line">       ],</span><br><span class="line">       <span class="string">"psr-4"</span>: &#123;</span><br><span class="line">           <span class="string">"App\\"</span>: <span class="string">"app/"</span></span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
 <p>之后所有的文件载入不再做赘述,可自行参考以下资料:</p>
-<blockquote><footer><strong>PHP中的PSR规范</strong><cite><a href="https://https://www.jianshu.com/p/b33155c15343" target="_blank" rel="noopener">https://www.jianshu.com/p/b33155c15343</a></cite></footer></blockquote>
+<blockquote><footer><strong>PHP中的PSR规范</strong><cite><a href="https://www.jianshu.com/p/b33155c15343" target="_blank" rel="noopener">www.jianshu.com/p/b33155c15343</a></cite></footer></blockquote>
 <blockquote><footer><strong>composer文档</strong><cite><a href="https://docs.phpcomposer.com/01-basic-usage.html#Autoloading" target="_blank" rel="noopener">docs.phpcomposer.com/01-basic-usage.html#Autoloading</a></cite></footer></blockquote>
 
       
@@ -550,7 +550,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -572,7 +572,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -649,7 +649,7 @@
     
       <span class="post-meta-item-text">站点字数统计&#58;</span>
     
-    <span title="站点字数统计">6.4k</span>
+    <span title="站点字数统计">8.9k</span>
   
 </div>
 
