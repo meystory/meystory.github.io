@@ -100,18 +100,18 @@
 
 
 
-<meta name="description" content="&amp;emsp;&amp;emsp;通过容器获取kernel实例,将request类传入kernel的handle方法,最终返回响应而这是一个极其漫长的过程,因为这个过程将整个框架所需的服务、文件全部初始化完成。 kernel的handle方法随着这个方法执行完毕,整体框架的流程就完成90%了1234567891011121314151617181920212223242526272829//index.ph">
+<meta name="description" content="&amp;emsp;&amp;emsp;通过容器获取kernel实例,将request类传入kernel的handle方法,最终返回响应而这是一个极其漫长的过程,因为这个过程将整个框架所需的服务、文件全部初始化完成。 kernel的handle方法随着这个方法执行完毕,整体框架的流程基本就完成80%了1234567891011121314151617181920212223242526272829//index.">
 <meta name="keywords" content="kernel">
 <meta property="og:type" content="article">
 <meta property="og:title" content="kernel类handle方法">
 <meta property="og:url" content="http://yoursite.com/2018/07/08/kernel-handle/index.html">
 <meta property="og:site_name" content="mey">
-<meta property="og:description" content="&amp;emsp;&amp;emsp;通过容器获取kernel实例,将request类传入kernel的handle方法,最终返回响应而这是一个极其漫长的过程,因为这个过程将整个框架所需的服务、文件全部初始化完成。 kernel的handle方法随着这个方法执行完毕,整体框架的流程就完成90%了1234567891011121314151617181920212223242526272829//index.ph">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;通过容器获取kernel实例,将request类传入kernel的handle方法,最终返回响应而这是一个极其漫长的过程,因为这个过程将整个框架所需的服务、文件全部初始化完成。 kernel的handle方法随着这个方法执行完毕,整体框架的流程基本就完成80%了1234567891011121314151617181920212223242526272829//index.">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-07-08T06:48:15.428Z">
+<meta property="og:updated_time" content="2018-07-09T15:57:56.904Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kernel类handle方法">
-<meta name="twitter:description" content="&amp;emsp;&amp;emsp;通过容器获取kernel实例,将request类传入kernel的handle方法,最终返回响应而这是一个极其漫长的过程,因为这个过程将整个框架所需的服务、文件全部初始化完成。 kernel的handle方法随着这个方法执行完毕,整体框架的流程就完成90%了1234567891011121314151617181920212223242526272829//index.ph">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;通过容器获取kernel实例,将request类传入kernel的handle方法,最终返回响应而这是一个极其漫长的过程,因为这个过程将整个框架所需的服务、文件全部初始化完成。 kernel的handle方法随着这个方法执行完毕,整体框架的流程基本就完成80%了1234567891011121314151617181920212223242526272829//index.">
 
 
 
@@ -368,7 +368,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  324
+                  326
                 </span>
               
 
@@ -406,7 +406,7 @@
 
       
         <p>&emsp;&emsp;通过容器获取kernel实例,将request类传入kernel的handle方法,最终返回响应而这是一个极其漫长的过程,因为这个过程将整个框架所需的服务、文件全部初始化完成。</p>
-<h4 id="kernel的handle方法"><a href="#kernel的handle方法" class="headerlink" title="kernel的handle方法"></a>kernel的handle方法</h4><p>随着这个方法执行完毕,整体框架的流程就完成90%了<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//index.php</span></span><br><span class="line">$kernel = $app-&gt;make(Illuminate\Contracts\Http\Kernel::class);</span><br><span class="line">$response = $kernel-&gt;handle(</span><br><span class="line">    $request = Illuminate\Http\Request::capture()</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">//kernel的handle方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">handle</span><span class="params">($request)</span></span></span><br><span class="line"><span class="function"></span>&#123;	<span class="comment">//在此过程中，所有异常都会通过Exceptions 直接抛出</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        $request-&gt;enableHttpMethodParameterOverride();</span><br><span class="line">        <span class="comment">//通过发送请求，经路由处理，最终返回response</span></span><br><span class="line">        $response = <span class="keyword">$this</span>-&gt;sendRequestThroughRouter($request);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (<span class="keyword">Exception</span> $e) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;reportException($e);</span><br><span class="line"></span><br><span class="line">        $response = <span class="keyword">$this</span>-&gt;renderException($request, $e);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable $e) &#123;</span><br><span class="line">        $e = <span class="keyword">new</span> FatalThrowableError($e);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;reportException($e);</span><br><span class="line"></span><br><span class="line">        $response = <span class="keyword">$this</span>-&gt;renderException($request, $e);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 触发'kernel.handled'事件listener,如果存在的话</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;app[<span class="string">'events'</span>]-&gt;fire(<span class="string">'kernel.handled'</span>, [$request, $response]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> $response;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="kernel的handle方法"><a href="#kernel的handle方法" class="headerlink" title="kernel的handle方法"></a>kernel的handle方法</h4><p>随着这个方法执行完毕,整体框架的流程基本就完成80%了<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//index.php</span></span><br><span class="line">$kernel = $app-&gt;make(Illuminate\Contracts\Http\Kernel::class);</span><br><span class="line">$response = $kernel-&gt;handle(</span><br><span class="line">    $request = Illuminate\Http\Request::capture()</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">//kernel的handle方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">handle</span><span class="params">($request)</span></span></span><br><span class="line"><span class="function"></span>&#123;	<span class="comment">//在此过程中，所有异常都会通过Exceptions 直接抛出</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        $request-&gt;enableHttpMethodParameterOverride();</span><br><span class="line">        <span class="comment">//通过发送请求，经路由处理，最终返回response</span></span><br><span class="line">        $response = <span class="keyword">$this</span>-&gt;sendRequestThroughRouter($request);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (<span class="keyword">Exception</span> $e) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;reportException($e);</span><br><span class="line"></span><br><span class="line">        $response = <span class="keyword">$this</span>-&gt;renderException($request, $e);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable $e) &#123;</span><br><span class="line">        $e = <span class="keyword">new</span> FatalThrowableError($e);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;reportException($e);</span><br><span class="line"></span><br><span class="line">        $response = <span class="keyword">$this</span>-&gt;renderException($request, $e);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 触发'kernel.handled'事件listener,如果存在的话</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;app[<span class="string">'events'</span>]-&gt;fire(<span class="string">'kernel.handled'</span>, [$request, $response]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> $response;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h4 id="sendRequestThroughRouter"><a href="#sendRequestThroughRouter" class="headerlink" title="sendRequestThroughRouter"></a>sendRequestThroughRouter</h4><p>重中之重的方法，分两个部分说<br>① $this-&gt;bootstrap();<br>① Pipeline管道;<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">sendRequestThroughRouter</span><span class="params">($request)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;app-&gt;instance(<span class="string">'request'</span>, $request); <span class="comment">//Reuqest 实例加入instances 数组中</span></span><br><span class="line"></span><br><span class="line">    Facade::clearResolvedInstance(<span class="string">'request'</span>); </span><br><span class="line"></span><br><span class="line">    <span class="keyword">$this</span>-&gt;bootstrap(); <span class="comment">//关键方法,几乎加载所有服务和文件</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 管道类处理request </span></span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">new</span> Pipeline(<span class="keyword">$this</span>-&gt;app))</span><br><span class="line">                -&gt;send($request)</span><br><span class="line">                -&gt;through(<span class="keyword">$this</span>-&gt;app-&gt;shouldSkipMiddleware() ? [] : <span class="keyword">$this</span>-&gt;middleware)</span><br><span class="line">                -&gt;then(<span class="keyword">$this</span>-&gt;dispatchToRouter());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
       
@@ -541,7 +541,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -563,7 +563,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">29</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -640,7 +640,7 @@
     
       <span class="post-meta-item-text">站点字数统计&#58;</span>
     
-    <span title="站点字数统计">8.9k</span>
+    <span title="站点字数统计">10.0k</span>
   
 </div>
 
