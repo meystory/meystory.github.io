@@ -100,18 +100,18 @@
 
 
 
-<meta name="description" content="探究request请求中，表单自动验证的实现原理。 ①任意建一个控制器,如IndexController，添加index方法12345678910111213namespace App\Http\Controllers;use App\Http\Requests\IndexRequest;class IndexController extends Controller&amp;#123;		//通过依赖注">
+<meta name="description" content="探究request请求中，表单自动验证的实现原理。①任意建一个控制器,如IndexController，添加index方法 12345678910111213namespace App\Http\Controllers;use App\Http\Requests\IndexRequest;class IndexController extends Controller&amp;#123;		//通过依赖注">
 <meta name="keywords" content="FormReuqest">
 <meta property="og:type" content="article">
 <meta property="og:title" content="FormRequest类">
 <meta property="og:url" content="http://yoursite.com/2018/08/01/formrequest/index.html">
 <meta property="og:site_name" content="mey">
-<meta property="og:description" content="探究request请求中，表单自动验证的实现原理。 ①任意建一个控制器,如IndexController，添加index方法12345678910111213namespace App\Http\Controllers;use App\Http\Requests\IndexRequest;class IndexController extends Controller&amp;#123;		//通过依赖注">
+<meta property="og:description" content="探究request请求中，表单自动验证的实现原理。①任意建一个控制器,如IndexController，添加index方法 12345678910111213namespace App\Http\Controllers;use App\Http\Requests\IndexRequest;class IndexController extends Controller&amp;#123;		//通过依赖注">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-08-01T14:54:32.501Z">
+<meta property="og:updated_time" content="2018-08-01T15:51:14.258Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="FormRequest类">
-<meta name="twitter:description" content="探究request请求中，表单自动验证的实现原理。 ①任意建一个控制器,如IndexController，添加index方法12345678910111213namespace App\Http\Controllers;use App\Http\Requests\IndexRequest;class IndexController extends Controller&amp;#123;		//通过依赖注">
+<meta name="twitter:description" content="探究request请求中，表单自动验证的实现原理。①任意建一个控制器,如IndexController，添加index方法 12345678910111213namespace App\Http\Controllers;use App\Http\Requests\IndexRequest;class IndexController extends Controller&amp;#123;		//通过依赖注">
 
 
 
@@ -405,8 +405,8 @@
       
 
       
-        <pre><code>探究request请求中，表单自动验证的实现原理。
-</code></pre><p>①任意建一个控制器,如IndexController，添加index方法<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> <span class="title">App</span>\<span class="title">Http</span>\<span class="title">Controllers</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">App</span>\<span class="title">Http</span>\<span class="title">Requests</span>\<span class="title">IndexRequest</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> <span class="keyword">extends</span> <span class="title">Controller</span></span></span><br><span class="line"><span class="class"></span>&#123;	</span><br><span class="line">	<span class="comment">//通过依赖注入进行InputRequest类的实例化</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span><span class="params">(IndexRequest $request)</span></span></span><br><span class="line"><span class="function">    </span>&#123;   </span><br><span class="line">        dump($request);</span><br><span class="line">        <span class="comment">// echo 123;</span></span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+        <p>探究request请求中，表单自动验证的实现原理。<br>①任意建一个控制器,如IndexController，添加index方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> <span class="title">App</span>\<span class="title">Http</span>\<span class="title">Controllers</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">App</span>\<span class="title">Http</span>\<span class="title">Requests</span>\<span class="title">IndexRequest</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> <span class="keyword">extends</span> <span class="title">Controller</span></span></span><br><span class="line"><span class="class"></span>&#123;	</span><br><span class="line">	<span class="comment">//通过依赖注入进行InputRequest类的实例化</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span><span class="params">(IndexRequest $request)</span></span></span><br><span class="line"><span class="function">    </span>&#123;   </span><br><span class="line">        dump($request);</span><br><span class="line">        <span class="comment">// echo 123;</span></span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>@任意建一个继承了FormRequest类的类,如IndexRequest<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> <span class="title">App</span>\<span class="title">Http</span>\<span class="title">Requests</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Foundation</span>\<span class="title">Http</span>\<span class="title">FormRequest</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexRequest</span> <span class="keyword">extends</span> <span class="title">FormRequest</span></span></span><br><span class="line"><span class="class"></span>&#123;	</span><br><span class="line">	<span class="comment">// public $redirect = '/home';</span></span><br><span class="line">	<span class="comment">// public $redirectAction = 'IndexController@test';</span></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">authorize</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">//这里请求参数id 是必须的</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">rules</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">    	<span class="keyword">return</span> [</span><br><span class="line">    		<span class="string">'id'</span> =&gt; <span class="string">'required'</span></span><br><span class="line">    	];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br><a id="more"></a></p>
 <h5 id="如何自动验证"><a href="#如何自动验证" class="headerlink" title="如何自动验证"></a>如何自动验证</h5><p>在IndexController中依赖注入，说白了就是通过容器make()方法获取实例,那么验证又是在哪里,以怎样的方式触发的呢<br>在框架config的app.php 中有很多服务注册,这里主要用到的一个服务就是</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//app.php</span></span><br><span class="line">...</span><br><span class="line">Illuminate\Validation\ValidationServiceProvider::class,</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment">//ValidationServiceProvider</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">register</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;registerValidationResolverHook();</span><br><span class="line">    ....</span><br><span class="line">&#125;</span><br><span class="line"> <span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">registerValidationResolverHook</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;app-&gt;afterResolving(<span class="function"><span class="keyword">function</span> <span class="params">(ValidatesWhenResolved $resolved)</span> </span>&#123;</span><br><span class="line">        $resolved-&gt;validate();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -469,6 +469,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/01/session/" rel="prev" title="Session">
+                Session <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -549,7 +553,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">17</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -571,7 +575,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">32</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -648,7 +652,7 @@
     
       <span class="post-meta-item-text">站点字数统计&#58;</span>
     
-    <span title="站点字数统计">12.4k</span>
+    <span title="站点字数统计">12.9k</span>
   
 </div>
 
