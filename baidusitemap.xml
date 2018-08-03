@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+
+    
+  <url>
+    <loc>http://uncocity.com/middleware.html</loc>
+    <lastmod>2018-08-03T07:00:20.251Z</lastmod>
+    <data>
+        <display>
+        <title>middleware</title>
+        <pubTime>2018-08-02T13:49:53.000Z</pubTime>
+        
+        <tag>中间件</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/session.html</loc>
+    <lastmod>2018-08-03T06:46:32.263Z</lastmod>
+    <data>
+        <display>
+        <title>Session</title>
+        <pubTime>2018-08-01T15:21:16.000Z</pubTime>
+        
+        <tag>middleware</tag>
+         
+        <tag>session</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/summary.html</loc>
+    <lastmod>2018-08-03T06:37:07.560Z</lastmod>
+    <data>
+        <display>
+        <title>laravel源码(开篇)</title>
+        <pubTime>2018-07-05T13:30:26.000Z</pubTime>
+        
+        <tag>laravel源码</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/app-instance.html</loc>
+    <lastmod>2018-08-03T06:35:15.543Z</lastmod>
+    <data>
+        <display>
+        <title>Application初始化</title>
+        <pubTime>2018-07-07T06:44:30.000Z</pubTime>
+        
+        <tag>app实例</tag>
+         
+        <tag>singleton方法</tag>
+         
+        <tag>share方法</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/app-require.html</loc>
+    <lastmod>2018-08-03T06:34:33.919Z</lastmod>
+    <data>
+        <display>
+        <title>Application.php的引入</title>
+        <pubTime>2018-07-07T03:15:54.000Z</pubTime>
+        
+        <tag>composer自动引入</tag>
+         
+        <tag>autoload</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/bootstrap.html</loc>
+    <lastmod>2018-08-03T06:33:18.373Z</lastmod>
+    <data>
+        <display>
+        <title>bootstrap所有服务</title>
+        <pubTime>2018-07-08T06:48:43.000Z</pubTime>
+        
+        <tag>bootstrap</tag>
+         
+        <tag>bootProviders</tag>
+         
+        <tag>RouteServiceProvider</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/container.html</loc>
+    <lastmod>2018-08-03T06:31:53.133Z</lastmod>
+    <data>
+        <display>
+        <title>容器与控制反转</title>
+        <pubTime>2018-07-07T04:19:27.000Z</pubTime>
+        
+        <tag>容器</tag>
+         
+        <tag>控制反转</tag>
+         
+        <tag>依赖注入</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/facades.html</loc>
+    <lastmod>2018-08-03T06:31:09.507Z</lastmod>
+    <data>
+        <display>
+        <title>门面Facades类</title>
+        <pubTime>2018-07-10T11:50:32.000Z</pubTime>
+        
+        <tag>门面</tag>
+         
+        <tag>Facedes</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/database.html</loc>
+    <lastmod>2018-08-03T06:30:24.854Z</lastmod>
+    <data>
+        <display>
+        <title>DatabaseServiceProvider</title>
+        <pubTime>2018-07-10T12:53:09.000Z</pubTime>
+        
+        <tag>DatabaseServiceProvider</tag>
+         
+        <tag>DB</tag>
+         
+        <tag>Eloquent</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/kernel-handle.html</loc>
+    <lastmod>2018-08-03T06:29:24.268Z</lastmod>
+    <data>
+        <display>
+        <title>kernel类handle方法</title>
+        <pubTime>2018-07-08T06:28:12.000Z</pubTime>
+        
+        <tag>kernel</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/kernel-pipeline.html</loc>
+    <lastmod>2018-08-03T06:26:52.306Z</lastmod>
+    <data>
+        <display>
+        <title>核心类中的pipeline</title>
+        <pubTime>2018-07-09T14:02:40.000Z</pubTime>
+        
+        <tag>pipeline</tag>
+         
+        <tag>middleware</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/pipeline.html</loc>
+    <lastmod>2018-08-03T06:25:59.146Z</lastmod>
+    <data>
+        <display>
+        <title>pipeline管道(原理模拟)</title>
+        <pubTime>2018-07-09T11:37:00.000Z</pubTime>
+        
+        <tag>pipeline</tag>
+         
+        <tag>middleware</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/send-response.html</loc>
+    <lastmod>2018-08-03T06:24:35.851Z</lastmod>
+    <data>
+        <display>
+        <title>发送response</title>
+        <pubTime>2018-07-10T11:49:13.000Z</pubTime>
+        
+        <tag>发送响应</tag>
+         
+        <tag>sendresponse</tag>
+         
+        <tag>terminate</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/request-instance.html</loc>
+    <lastmod>2018-08-03T06:23:13.273Z</lastmod>
+    <data>
+        <display>
+        <title>request实例</title>
+        <pubTime>2018-07-08T05:44:01.000Z</pubTime>
+        
+        <tag>Request实例</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/router-dispatch.html</loc>
+    <lastmod>2018-08-03T06:22:08.365Z</lastmod>
+    <data>
+        <display>
+        <title>将Request分配至Route</title>
+        <pubTime>2018-07-09T14:48:26.000Z</pubTime>
+        
+        <tag>分配路由</tag>
+         
+        <tag>findRoute方法</tag>
+         
+        <tag>prepareResponse</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+    
+  <url>
+    <loc>http://uncocity.com/auth.html</loc>
+    <lastmod>2018-08-02T15:30:03.178Z</lastmod>
+    <data>
+        <display>
+        <title>Auth 用户认证</title>
+        <pubTime>2018-07-31T15:04:17.000Z</pubTime>
+        
+        <tag>用户认证</tag>
+         
+        <tag>Auth</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+    
+  <url>
+    <loc>http://uncocity.com/formrequest.html</loc>
+    <lastmod>2018-08-02T15:06:35.789Z</lastmod>
+    <data>
+        <display>
+        <title>FormRequest类</title>
+        <pubTime>2018-08-01T13:24:09.000Z</pubTime>
+        
+        <tag>FormReuqest</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://uncocity.com/tree-directory.html</loc>
+    <lastmod>2018-07-08T06:23:18.078Z</lastmod>
+    <data>
+        <display>
+        <title>框架目录结构</title>
+        <pubTime>2018-07-06T02:15:55.000Z</pubTime>
+        
+        <tag>laravel目录结构</tag>
+         
+         
+           
+             
+              <breadCrumb title="laravel源码学习分享" url="http://uncocity.com/categories/laravel%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E5%88%86%E4%BA%AB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+</urlset>
