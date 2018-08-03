@@ -10,5 +10,5 @@ Disallow: /fonts/
 Disallow: /vendors/
 Disallow: /fancybox/
 
-Sitemap: http://uncocity.com/sitemap.xml
-Sitemap: http://uncocity.com/baidusitemap.xml
+Sitemap: http://blog.uncocity.com/sitemap.xml
+Sitemap: http://blog.uncocity.com/baidusitemap.xml
