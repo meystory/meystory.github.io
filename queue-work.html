@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="artisan控制台,queue:work命令," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="关于事件出队列的处理，即控制台的queue:work命令的原理解析。 artisan命令写入要执行queue:work命令，首先命令在artisan中必须是存在，那么它是在哪里写入的呢123456789101112131415161718192021// QueueServiceProvider extends ServiceProviderprotected function registerW">
+<meta name="keywords" content="artisan控制台,queue:work命令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="queue之Artisan">
+<meta property="og:url" content="http://blog.uncocity.com/queue-work.html">
+<meta property="og:site_name" content="laravel源码学习">
+<meta property="og:description" content="关于事件出队列的处理，即控制台的queue:work命令的原理解析。 artisan命令写入要执行queue:work命令，首先命令在artisan中必须是存在，那么它是在哪里写入的呢123456789101112131415161718192021// QueueServiceProvider extends ServiceProviderprotected function registerW">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-08-05T10:05:30.554Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="queue之Artisan">
+<meta name="twitter:description" content="关于事件出队列的处理，即控制台的queue:work命令的原理解析。 artisan命令写入要执行queue:work命令，首先命令在artisan中必须是存在，那么它是在哪里写入的呢123456789101112131415161718192021// QueueServiceProvider extends ServiceProviderprotected function registerW">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.uncocity.com/queue-work.html"/>
+
+
+
+
+
+  <title>queue之Artisan | laravel源码学习</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://your-url" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">laravel源码学习</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.uncocity.com/queue-work.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="mey">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laravel源码学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">queue之Artisan</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-05T15:08:59+08:00">
+                2018-08-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/laravel源码学习分享/" itemprop="url" rel="index">
+                    <span itemprop="name">laravel源码学习分享</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  950
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  4
+                </span>
+              
+            </div>
+          
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <div class="note success"><p>关于事件出队列的处理，即控制台的queue:work命令的原理解析。</p></div>
+<h5 id="artisan命令写入"><a href="#artisan命令写入" class="headerlink" title="artisan命令写入"></a>artisan命令写入</h5><p>要执行queue:work命令，首先命令在artisan中必须是存在，那么它是在哪里写入的呢<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// QueueServiceProvider extends ServiceProvider</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">registerWorkCommand</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;app-&gt;singleton(<span class="string">'command.queue.work'</span>, <span class="function"><span class="keyword">function</span> <span class="params">($app)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> WorkCommand($app[<span class="string">'queue.worker'</span>]);</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="comment">//这里就是写入的地方</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;commands(<span class="string">'command.queue.work'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//父类ServiceProvider</span></span><br><span class="line"> <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">commands</span><span class="params">($commands)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $commands = is_array($commands) ? $commands : func_get_args();</span><br><span class="line"></span><br><span class="line">    $events = <span class="keyword">$this</span>-&gt;app[<span class="string">'events'</span>];</span><br><span class="line"></span><br><span class="line">    $events-&gt;listen(<span class="string">'artisan.start'</span>, <span class="function"><span class="keyword">function</span> <span class="params">($artisan)</span> <span class="title">use</span> <span class="params">($commands)</span> </span>&#123;</span><br><span class="line">        $artisan-&gt;resolveCommands($commands);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>除了最底层的基本命令(如 help)，其他命令一般都是在为服务提供者进行注册时进行的命令写入。可以看到在写入命令的同时，也为artisan.start注册了一个事件监听者。这个用途就是在当我们执行命令时，根据字符，解析成具体操作类。<br><a id="more"></a></p>
+<h5 id="命令解析"><a href="#命令解析" class="headerlink" title="命令解析"></a>命令解析</h5><p>现在对 php artisan queue:work [ php 文件名 参数]。进行解析<br>命令行解析流程如下：</p>
+<ul>
+<li>获取artisan实例, Illuminate\Console\Application</li>
+<li>artisan-&gt;resolveCommand(‘queue:work’),获取具体Command类</li>
+<li>执行Command类-&gt;execute()方法<br>在这个例子中具体的Command实例就是WorkCommand类,然后执行其在这个例子中具体的Command实例就是WorkCommand类-&gt;execute()<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Illuminate\Console\Application时，进行事件触发处理</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">(Container $laravel, Dispatcher $events, $version)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	...</span><br><span class="line">    $events-&gt;fire(<span class="string">'artisan.start'</span>, [<span class="keyword">$this</span>]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//实际是父类(Illuminate\Console\Command)上的方法</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">execute</span><span class="params">(InputInterface $input, OutputInterface $output)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $method = method_exists(<span class="keyword">$this</span>, <span class="string">'handle'</span>) ? <span class="string">'handle'</span> : <span class="string">'fire'</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;laravel-&gt;call([<span class="keyword">$this</span>, $method]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+WorkCommand是没有handle方法的，所以执行fire方法。在执行process可以看到，会现在当前任务的执行尝试次数，如果不满足条件，则按失败处理，并执行相关处理方法<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fire</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">	....</span><br><span class="line">    $response = <span class="keyword">$this</span>-&gt;runWorker(</span><br><span class="line">        $connection, $queue, $delay, $memory, <span class="keyword">$this</span>-&gt;option(<span class="string">'daemon'</span>)</span><br><span class="line">    );</span><br><span class="line">    ....</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">runWorker</span><span class="params">($connection, $queue, $delay, $memory, $daemon = false)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	....</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;worker-&gt;pop(</span><br><span class="line">        $connection, $queue, $delay,</span><br><span class="line">        <span class="keyword">$this</span>-&gt;option(<span class="string">'sleep'</span>), <span class="keyword">$this</span>-&gt;option(<span class="string">'tries'</span>)</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//Illuminate\Queue\Worker</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">process</span><span class="params">($connection, Job $job, $maxTries = <span class="number">0</span>, $delay = <span class="number">0</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> ($maxTries &gt; <span class="number">0</span> &amp;&amp; $job-&gt;attempts() &gt; $maxTries) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;logFailedJob($connection, $job);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//通过RedisQueue类获取RedisJob类</span></span><br><span class="line">    $job = <span class="keyword">$this</span>-&gt;getNextJob($connection, $queue);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">        $job-&gt;fire();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;raiseAfterJobEvent($connection, $job);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> [<span class="string">'job'</span> =&gt; $job, <span class="string">'failed'</span> =&gt; <span class="keyword">false</span>];</span><br><span class="line">    &#125; <span class="keyword">catch</span> (<span class="keyword">Exception</span> $e) &#123;</span><br><span class="line">    	....</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+按当前例子，这里的Job可以理解为一条redis数据(待处理任务),任务类也是RedisJob类。<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//一般样本数据</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"job"</span>: <span class="string">"Illuminate\\Events\\CallQueuedHandler@call"</span>,</span><br><span class="line">  <span class="string">"data"</span>: &#123;</span><br><span class="line">    <span class="string">"class"</span>: <span class="string">"App\\Listeners\\TestListener1"</span>,</span><br><span class="line">    <span class="string">"method"</span>: <span class="string">"test"</span>,</span><br><span class="line">    <span class="string">"data"</span>: <span class="string">"a:1:&#123;i:0;O:20:\"App\\Events\\TestEvent\":0:&#123;&#125;&#125;"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"id"</span>: <span class="string">"ihS5FJPgxxFOUdg7TxmWjErmmY2Q6PTk"</span>,</span><br><span class="line">  <span class="string">"attempts"</span>: <span class="number">1</span></span><br><span class="line">&#125;,</span><br><span class="line"><span class="comment">//广播样本数据</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"job"</span>: <span class="string">"Illuminate\\Broadcasting\\BroadcastEvent"</span>,</span><br><span class="line">  <span class="string">"data"</span>: &#123;</span><br><span class="line">    <span class="string">"event"</span>: <span class="string">"O:20:\"App\\Events\\TestEvent\":0:&#123;&#125;"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"id"</span>: <span class="string">"SGGHgGBWHzJrH8pPZKrXAmaxujdTZJbj"</span>,</span><br><span class="line">  <span class="string">"attempts"</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//将队列数据转为数组</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fire</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;resolveAndFire(json_decode(<span class="keyword">$this</span>-&gt;getRawBody(), <span class="keyword">true</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+resolveAndFire方法,将获取根据job字段值，获取具体操作实例。一般事件默认为Illuminate\Events\CallQueuedHandler@call。<font color="red">parseJob方法，如果没有@method, 则默认method为’fire’</font>，如广播事件则为Illuminate\Broadcasting\BroadcastEvent。 (相当于拼接.‘@fire’)。<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//基类Illuminate\Queue\Jobs\Job</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">resolveAndFire</span><span class="params">(array $payload)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">list</span>($class, $method) = <span class="keyword">$this</span>-&gt;parseJob($payload[<span class="string">'job'</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">$this</span>-&gt;instance = <span class="keyword">$this</span>-&gt;resolve($class);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">$this</span>-&gt;instance-&gt;&#123;$method&#125;(<span class="keyword">$this</span>, <span class="keyword">$this</span>-&gt;resolveQueueableEntities($payload[<span class="string">'data'</span>]));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+获取Illuminate\Events\CallQueuedHandler实例，执行该实例的call方法。并将data作为参数传入。<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">call</span><span class="params">(Job $job, array $data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $handler = <span class="keyword">$this</span>-&gt;setJobInstanceIfNecessary(</span><br><span class="line">        $job, <span class="keyword">$this</span>-&gt;container-&gt;make($data[<span class="string">'class'</span>])</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    call_user_func_array(</span><br><span class="line">        [$handler, $data[<span class="string">'method'</span>]], unserialize($data[<span class="string">'data'</span>])</span><br><span class="line">    );</span><br><span class="line">    <span class="comment">//清除队列数据</span></span><br><span class="line">    <span class="keyword">if</span> (! $job-&gt;isDeletedOrReleased()) &#123;</span><br><span class="line">        $job-&gt;delete(); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+这里需要注意的一点是，清除队列中的该条任务，这里清除的实际是reversed有序队列中的备份任务，因为在生产环境中，由于程序错误导致任务无法正常进行是存在的，所以laravel会默认备份。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束感谢您的阅读-------------</div>
+    
+</div>
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/artisan控制台/" rel="tag"><i class="fa fa-tag"></i> artisan控制台</a>
+          
+            <a href="/tags/queue-work命令/" rel="tag"><i class="fa fa-tag"></i> queue:work命令</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/event-queue.html" rel="next" title="Event-队列">
+                <i class="fa fa-chevron-left"></i> Event-队列
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="mey" />
+            
+              <p class="site-author-name" itemprop="name">mey</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/meystory" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#artisan命令写入"><span class="nav-number">1.</span> <span class="nav-text">artisan命令写入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#命令解析"><span class="nav-number">2.</span> <span class="nav-text">命令解析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">mey</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点字数统计&#58;</span>
+    
+    <span title="站点字数统计">17.5k</span>
+  
+</div>
+
+
+  <div class="powered-by"> <a class="theme-link" rel="external nofollow" target="_blank" href="https://hexo.io">Hexo</a> </div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+
+</html>

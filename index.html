@@ -282,6 +282,537 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.uncocity.com/queue-work.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="mey">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laravel源码学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/queue-work.html" itemprop="url">queue之Artisan</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-05T15:08:59+08:00">
+                2018-08-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/laravel源码学习分享/" itemprop="url" rel="index">
+                    <span itemprop="name">laravel源码学习分享</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  950
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  4
+                </span>
+              
+            </div>
+          
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <div class="note success"><p>关于事件出队列的处理，即控制台的queue:work命令的原理解析。</p></div>
+<h5 id="artisan命令写入"><a href="#artisan命令写入" class="headerlink" title="artisan命令写入"></a>artisan命令写入</h5><p>要执行queue:work命令，首先命令在artisan中必须是存在，那么它是在哪里写入的呢<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// QueueServiceProvider extends ServiceProvider</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">registerWorkCommand</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;app-&gt;singleton(<span class="string">'command.queue.work'</span>, <span class="function"><span class="keyword">function</span> <span class="params">($app)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> WorkCommand($app[<span class="string">'queue.worker'</span>]);</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="comment">//这里就是写入的地方</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;commands(<span class="string">'command.queue.work'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//父类ServiceProvider</span></span><br><span class="line"> <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">commands</span><span class="params">($commands)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $commands = is_array($commands) ? $commands : func_get_args();</span><br><span class="line"></span><br><span class="line">    $events = <span class="keyword">$this</span>-&gt;app[<span class="string">'events'</span>];</span><br><span class="line"></span><br><span class="line">    $events-&gt;listen(<span class="string">'artisan.start'</span>, <span class="function"><span class="keyword">function</span> <span class="params">($artisan)</span> <span class="title">use</span> <span class="params">($commands)</span> </span>&#123;</span><br><span class="line">        $artisan-&gt;resolveCommands($commands);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>除了最底层的基本命令(如 help)，其他命令一般都是在为服务提供者进行注册时进行的命令写入。可以看到在写入命令的同时，也为artisan.start注册了一个事件监听者。这个用途就是在当我们执行命令时，根据字符，解析成具体操作类。<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/queue-work.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.uncocity.com/event-queue.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="mey">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laravel源码学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/event-queue.html" itemprop="url">Event-队列</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-05T13:08:00+08:00">
+                2018-08-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/laravel源码学习分享/" itemprop="url" rel="index">
+                    <span itemprop="name">laravel源码学习分享</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  458
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  2
+                </span>
+              
+            </div>
+          
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <div class="note success"><p>当事件监听了实现了ShouldQueue时，该事件就会通过队列进行处理。</p></div>
+<h5 id="ShouldQueue"><a href="#ShouldQueue" class="headerlink" title="ShouldQueue"></a>ShouldQueue</h5><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//实现ShouldQueue接口</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestListener1</span> <span class="keyword">implements</span> <span class="title">ShouldQueue</span></span>&#123;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">test</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">    	</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//Dipatcher执行makeListener</span></span><br><span class="line"> <span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">createClassCallable</span><span class="params">($listener, $container)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	...</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;handlerShouldBeQueued($class)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;createQueuedHandlerCallable($class, $method);</span><br><span class="line">    &#125; </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//创建队列的操作回调</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">createQueuedHandlerCallable</span><span class="params">($class, $method)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="params">()</span> <span class="title">use</span> <span class="params">($class, $method)</span> </span>&#123;</span><br><span class="line">        $arguments = <span class="keyword">$this</span>-&gt;cloneArgumentsForQueueing(func_get_args());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (method_exists($class, <span class="string">'queue'</span>)) &#123;</span><br><span class="line">        	<span class="comment">//自定义的队列操作方法</span></span><br><span class="line">            <span class="keyword">$this</span>-&gt;callQueueMethodOnHandler($class, $method, $arguments);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;resolveQueue()-&gt;push(<span class="string">'Illuminate\Events\CallQueuedHandler@call'</span>, [</span><br><span class="line">                <span class="string">'class'</span> =&gt; $class, <span class="string">'method'</span> =&gt; $method, <span class="string">'data'</span> =&gt; serialize($arguments),</span><br><span class="line">            ]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="resolveQueue"><a href="#resolveQueue" class="headerlink" title="resolveQueue"></a>resolveQueue</h5><p>resolveQueue通过执行 $app-&gt;make(‘Illuminate\Contracts\Queue\Factory’),实质获取QueueManager类。也就是执行了容器最初绑定event时，通过setQueueResolver为event赋予的闭包。<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">$this</span>-&gt;app-&gt;singleton(<span class="string">'events'</span>, <span class="function"><span class="keyword">function</span> <span class="params">($app)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">new</span> Dispatcher($app))-&gt;setQueueResolver(</span><br><span class="line">    	<span class="comment">//执行下面的闭包</span></span><br><span class="line">    	<span class="function"><span class="keyword">function</span> <span class="params">()</span> <span class="title">use</span> <span class="params">($app)</span> </span>&#123;</span><br><span class="line">        	<span class="keyword">return</span> $app-&gt;make(<span class="string">'Illuminate\Contracts\Queue\Factory'</span>);</span><br><span class="line">    	&#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure><br>说白了就是讲当前监听者类序列化， 将类名、执行方法、序列化后的数据存入队列，这里以redis为例。如执行event(new \App\Event\TestEvent())时,会在redis产生如下的数据:<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//redis_key</span></span><br><span class="line">在默认<span class="keyword">DB</span>下 queues下 的 'queues:default'中</span><br><span class="line"><span class="comment">//数据</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"job"</span>: <span class="string">"Illuminate\\Events\\CallQueuedHandler@call"</span>,</span><br><span class="line">  <span class="string">"data"</span>: &#123;</span><br><span class="line">    <span class="string">"class"</span>: <span class="string">"App\\Listeners\\TestListener1"</span>,</span><br><span class="line">    <span class="string">"method"</span>: <span class="string">"test"</span>,</span><br><span class="line">    <span class="string">"data"</span>: <span class="string">"a:1:&#123;i:0;O:20:\"</span><span class="keyword">App</span>\\Events\\TestEvent\<span class="string">":0:&#123;&#125;&#125;"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"id"</span>: <span class="string">"ihS5FJPgxxFOUdg7TxmWjErmmY2Q6PTk"</span>,</span><br><span class="line">  <span class="string">"attempts"</span>: 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>在实际开发过程有些事件的触发后不需要即时处理，那么就先放进队列，然后在出队列进行逐个处理，比如系统通知等。看到上面的json字符串，我们大概都能想到它的处理流程，最终其实也是执行了App\Listeners\TestListener1下的test方法。<br>关于出队列的处理，我们知道在命令行通过执行php artisan queue:work 就可以将这些队列任务处理完毕。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.uncocity.com/event-provider.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="mey">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laravel源码学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/event-provider.html" itemprop="url">Event-服务</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-04T22:34:15+08:00">
+                2018-08-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/laravel源码学习分享/" itemprop="url" rel="index">
+                    <span itemprop="name">laravel源码学习分享</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,022
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  5
+                </span>
+              
+            </div>
+          
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <div class="note success"><p>Event事件服务是框架中必要重要的一部分，其中也会用到Queue类，Broadcast类，这也是一种设计模式，叫观察者模式。</p></div>
+<h5 id="Dispatcher"><a href="#Dispatcher" class="headerlink" title="Dispatcher"></a>Dispatcher</h5><p>通过EventProvider为容器注册一个’event’对应的Dispatcher类。通过容器make方法直接获取事件分配类。<font color="red">框架中有两个EventProvider,这两个作用是完全不一样的</font></p>
+<ul>
+<li><p>Illuminate\Events\EventServiceProvider，其注册是在Application的基本服务注册方法里</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Application, 在App类实例化时就已经注册了。</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">registerBaseServiceProviders</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;register(<span class="keyword">new</span> EventServiceProvider(<span class="keyword">$this</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">$this</span>-&gt;register(<span class="keyword">new</span> RoutingServiceProvider(<span class="keyword">$this</span>));</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">register</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;app-&gt;singleton(<span class="string">'events'</span>, <span class="function"><span class="keyword">function</span> <span class="params">($app)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="keyword">new</span> Dispatcher($app))-&gt;setQueueResolver(<span class="function"><span class="keyword">function</span> <span class="params">()</span> <span class="title">use</span> <span class="params">($app)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> $app-&gt;make(<span class="string">'Illuminate\Contracts\Queue\Factory'</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/event-provider.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://blog.uncocity.com/middleware.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -353,17 +884,6 @@
 
           
           
-             <span id="/middleware.html" class="leancloud_visitors" data-flag-title="middleware">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
 
           
 
@@ -399,13 +919,6 @@
               
             </div>
           
-
-          
-              <div class="post-description">
-                  laravel中间件有全局中间件，路由中间件，控制器中间件三类
-              </div>
-          
-
         </div>
       </header>
     
@@ -548,17 +1061,6 @@
 
           
           
-             <span id="/session.html" class="leancloud_visitors" data-flag-title="Session">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
 
           
 
@@ -594,13 +1096,6 @@
               
             </div>
           
-
-          
-              <div class="post-description">
-                  Session中间件源码解析
-              </div>
-          
-
         </div>
       </header>
     
@@ -743,17 +1238,6 @@
 
           
           
-             <span id="/formrequest.html" class="leancloud_visitors" data-flag-title="FormRequest类">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
 
           
 
@@ -789,13 +1273,6 @@
               
             </div>
           
-
-          
-              <div class="post-description">
-                  laravel FormRequest类通过依赖注入，用于控制请求表单数据的快捷自动验证
-              </div>
-          
-
         </div>
       </header>
     
@@ -939,17 +1416,6 @@
 
           
           
-             <span id="/auth.html" class="leancloud_visitors" data-flag-title="Auth 用户认证">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
 
           
 
@@ -985,13 +1451,6 @@
               
             </div>
           
-
-          
-              <div class="post-description">
-                  Auth认证，登录，注册流程源码解析
-              </div>
-          
-
         </div>
       </header>
     
@@ -1135,17 +1594,6 @@
 
           
           
-             <span id="/registerProvider.html" class="leancloud_visitors" data-flag-title="registerProvider">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
 
           
 
@@ -1181,13 +1629,6 @@
               
             </div>
           
-
-          
-              <div class="post-description">
-                  laravel服务提供者注册流程
-              </div>
-          
-
         </div>
       </header>
     
@@ -1330,17 +1771,6 @@
 
           
           
-             <span id="/database.html" class="leancloud_visitors" data-flag-title="DatabaseServiceProvider">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
 
           
 
@@ -1376,13 +1806,6 @@
               
             </div>
           
-
-          
-              <div class="post-description">
-                  laravel DB类服务注册，及查询操作生成流程
-              </div>
-          
-
         </div>
       </header>
     
@@ -1525,17 +1948,6 @@
 
           
           
-             <span id="/facades.html" class="leancloud_visitors" data-flag-title="门面Facades类">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
 
           
 
@@ -1571,13 +1983,6 @@
               
             </div>
           
-
-          
-              <div class="post-description">
-                  laravel Facedes静态调用的原理
-              </div>
-          
-
         </div>
       </header>
     
@@ -1637,596 +2042,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.uncocity.com/send-response.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="mey">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laravel源码学习">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/send-response.html" itemprop="url">发送response</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-10T19:49:13+08:00">
-                2018-07-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/laravel源码学习分享/" itemprop="url" rel="index">
-                    <span itemprop="name">laravel源码学习分享</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/send-response.html" class="leancloud_visitors" data-flag-title="发送response">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  464
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  2
-                </span>
-              
-            </div>
-          
-
-          
-              <div class="post-description">
-                  laravel将request处理成response的流程及底层分析
-              </div>
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>&emsp;&emsp; index.php 的最后两行代码。整体流程结束。<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//index.php</span></span><br><span class="line">$response-&gt;send(); <span class="comment">// 发送响应</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 循环遍历kernel里所有中间件和当前路由所用中间件, 如果terminate方法存在,则执行</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//app-&gt;terminate(), 执行 全局terminate 方法</span></span><br><span class="line">$kernel-&gt;terminate($request, $response);</span><br></pre></td></tr></table></figure></p>
-<h4 id="sendResponse"><a href="#sendResponse" class="headerlink" title="sendResponse"></a>sendResponse</h4><p>$response 为 Illuminate\Http\Response类,继承插件BaseResponse类<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//插件 symfony/http-foundation</span></span><br><span class="line">use <span class="type">Symfony</span>\<span class="type">Component</span>\<span class="type">HttpFoundation</span>\<span class="type">Response</span> as <span class="type">BaseResponse</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Response</span> <span class="keyword">extends</span> <span class="title">BaseResponse</span></span></span><br></pre></td></tr></table></figure><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/send-response.html#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.uncocity.com/router-dispatch.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="mey">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laravel源码学习">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/router-dispatch.html" itemprop="url">将Request分配至Route</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-09T22:48:26+08:00">
-                2018-07-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/laravel源码学习分享/" itemprop="url" rel="index">
-                    <span itemprop="name">laravel源码学习分享</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/router-dispatch.html" class="leancloud_visitors" data-flag-title="将Request分配至Route">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  893
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  4
-                </span>
-              
-            </div>
-          
-
-          
-              <div class="post-description">
-                  解析laravel源码中request是如何分配至对应路由的过程
-              </div>
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>在上篇的管道中的最终会执行下面这行代码<br><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="variable">$this</span>-&gt;router-&gt;dispatch(<span class="variable">$request</span>);</span><br></pre></td></tr></table></figure></p>
-<h4 id="dispatch方法"><a href="#dispatch方法" class="headerlink" title="dispatch方法"></a>dispatch方法</h4><p>首先调用路由前置的过滤方法, 如在routes.php 中可以使用Route::filter(‘before’=&gt;’auth’)来创建前置方法<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Router类</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">dispatch</span><span class="params">(Request $request)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;currentRequest = $request;</span><br><span class="line">    <span class="comment">//分配至路由前，需要执行的过滤器</span></span><br><span class="line">    $response = <span class="keyword">$this</span>-&gt;callFilter(<span class="string">'before'</span>, $request);</span><br><span class="line">    <span class="comment">//如果过滤器有直接返回response,就不再进行路由分配</span></span><br><span class="line">    <span class="keyword">if</span> (is_null($response)) &#123;</span><br><span class="line">        $response = <span class="keyword">$this</span>-&gt;dispatchToRoute($request);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $response = <span class="keyword">$this</span>-&gt;prepareResponse($request, $response);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">$this</span>-&gt;callFilter(<span class="string">'after'</span>, $request, $response);</span><br><span class="line">    <span class="keyword">return</span> $response;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/router-dispatch.html#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.uncocity.com/kernel-pipeline.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="mey">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laravel源码学习">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/kernel-pipeline.html" itemprop="url">核心类中的pipeline</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-09T22:02:40+08:00">
-                2018-07-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/laravel源码学习分享/" itemprop="url" rel="index">
-                    <span itemprop="name">laravel源码学习分享</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/kernel-pipeline.html" class="leancloud_visitors" data-flag-title="核心类中的pipeline">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  499
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  2
-                </span>
-              
-            </div>
-          
-
-          
-              <div class="post-description">
-                  laravel框架中kerenl类中全局中间件处理
-              </div>
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>&emsp;&emsp;这是框架中kernel管道中的源码,through 方法将获取 App\Http\kernel中的$middleware数组，给Pipeline中的pipes属性赋值(与上篇中的$pipes一样),规定需要通过的中间件。</p>
-<h4 id="middleware"><a href="#middleware" class="headerlink" title="middleware"></a>middleware</h4><p>App\Http\kernel中的$middleware 如下<br><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">protected <span class="formula">$middleware = [</span></span><br><span class="line"><span class="formula">   //判断当前项目是否处于维护模式</span></span><br><span class="line"><span class="formula">       <span class="tag">\<span class="name">Illuminate</span></span><span class="tag">\<span class="name">Foundation</span></span><span class="tag">\<span class="name">Http</span></span><span class="tag">\<span class="name">Middleware</span></span><span class="tag">\<span class="name">CheckForMaintenanceMode</span></span>::class,</span></span><br><span class="line"><span class="formula">   //响应头Cookie如XSRF-TOKEN，laravel_session加密，以及对应Request的Cookie解密</span></span><br><span class="line"><span class="formula">       <span class="tag">\<span class="name">App</span></span><span class="tag">\<span class="name">Http</span></span><span class="tag">\<span class="name">Middleware</span></span><span class="tag">\<span class="name">EncryptCookies</span></span>::class, </span></span><br><span class="line"><span class="formula">   //获取CookieJar队列中的Cookie类, 并存入响应头, 如用户登录remember_token</span></span><br><span class="line"><span class="formula">       <span class="tag">\<span class="name">Illuminate</span></span><span class="tag">\<span class="name">Cookie</span></span><span class="tag">\<span class="name">Middleware</span></span><span class="tag">\<span class="name">AddQueuedCookiesToResponse</span></span>::class, </span></span><br><span class="line"><span class="formula">   //初始化session,整个底层并未session_start,通过手动生成session_id来完成这一动作</span></span><br><span class="line"><span class="formula">       <span class="tag">\<span class="name">Illuminate</span></span><span class="tag">\<span class="name">Session</span></span><span class="tag">\<span class="name">Middleware</span></span><span class="tag">\<span class="name">StartSession</span></span>::class,</span></span><br><span class="line"><span class="formula">   //将session中的errors变量，注入到全局视图类中。这是个一次性session</span></span><br><span class="line"><span class="formula">       <span class="tag">\<span class="name">Illuminate</span></span><span class="tag">\<span class="name">View</span></span><span class="tag">\<span class="name">Middleware</span></span><span class="tag">\<span class="name">ShareErrorsFromSession</span></span>::class,</span></span><br><span class="line"><span class="formula">   //Csrf 验证请求中的XSRF-TOKEN值</span></span><br><span class="line"><span class="formula">       <span class="tag">\<span class="name">App</span></span><span class="tag">\<span class="name">Http</span></span><span class="tag">\<span class="name">Middleware</span></span><span class="tag">\<span class="name">VerifyCsrfToken</span></span>::class,</span></span><br><span class="line"><span class="formula">   ];</span></span><br></pre></td></tr></table></figure><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/kernel-pipeline.html#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2276,7 +2096,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2298,7 +2118,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">39</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -2359,7 +2179,7 @@
     
       <span class="post-meta-item-text">站点字数统计&#58;</span>
     
-    <span title="站点字数统计">15.0k</span>
+    <span title="站点字数统计">17.5k</span>
   
 </div>
 
@@ -2528,113 +2348,6 @@
 
 
   
-
-  
-  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
-  <script>AV.initialize("9VGMDOx37uwlXoD20yOLmldt-gzGzoHsz", "P0vuVO0WlrR9Q12yw6LTFAlg");</script>
-  <script>
-    function showTime(Counter) {
-      var query = new AV.Query(Counter);
-      var entries = [];
-      var $visitors = $(".leancloud_visitors");
-
-      $visitors.each(function () {
-        entries.push( $(this).attr("id").trim() );
-      });
-
-      query.containedIn('url', entries);
-      query.find()
-        .done(function (results) {
-          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
-
-          if (results.length === 0) {
-            $visitors.find(COUNT_CONTAINER_REF).text(0);
-            return;
-          }
-
-          for (var i = 0; i < results.length; i++) {
-            var item = results[i];
-            var url = item.get('url');
-            var time = item.get('time');
-            var element = document.getElementById(url);
-
-            $(element).find(COUNT_CONTAINER_REF).text(time);
-          }
-          for(var i = 0; i < entries.length; i++) {
-            var url = entries[i];
-            var element = document.getElementById(url);
-            var countSpan = $(element).find(COUNT_CONTAINER_REF);
-            if( countSpan.text() == '') {
-              countSpan.text(0);
-            }
-          }
-        })
-        .fail(function (object, error) {
-          console.log("Error: " + error.code + " " + error.message);
-        });
-    }
-
-    function addCount(Counter) {
-      var $visitors = $(".leancloud_visitors");
-      var url = $visitors.attr('id').trim();
-      var title = $visitors.attr('data-flag-title').trim();
-      var query = new AV.Query(Counter);
-
-      query.equalTo("url", url);
-      query.find({
-        success: function(results) {
-          if (results.length > 0) {
-            var counter = results[0];
-            counter.fetchWhenSave(true);
-            counter.increment("time");
-            counter.save(null, {
-              success: function(counter) {
-                var $element = $(document.getElementById(url));
-                $element.find('.leancloud-visitors-count').text(counter.get('time'));
-              },
-              error: function(counter, error) {
-                console.log('Failed to save Visitor num, with error message: ' + error.message);
-              }
-            });
-          } else {
-            var newcounter = new Counter();
-            /* Set ACL */
-            var acl = new AV.ACL();
-            acl.setPublicReadAccess(true);
-            acl.setPublicWriteAccess(true);
-            newcounter.setACL(acl);
-            /* End Set ACL */
-            newcounter.set("title", title);
-            newcounter.set("url", url);
-            newcounter.set("time", 1);
-            newcounter.save(null, {
-              success: function(newcounter) {
-                var $element = $(document.getElementById(url));
-                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
-              },
-              error: function(newcounter, error) {
-                console.log('Failed to create');
-              }
-            });
-          }
-        },
-        error: function(error) {
-          console.log('Error:' + error.code + " " + error.message);
-        }
-      });
-    }
-
-    $(function() {
-      var Counter = AV.Object.extend("Counter");
-      if ($('.leancloud_visitors').length == 1) {
-        addCount(Counter);
-      } else if ($('.post-title-link').length > 1) {
-        showTime(Counter);
-      }
-    });
-  </script>
-
-
 
   
 

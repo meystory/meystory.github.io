@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="event服务,eventDispatcher," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Event事件服务是框架中必要重要的一部分，其中也会用到Queue类，Broadcast类，这也是一种设计模式，叫观察者模式。 Dispatcher通过EventProvider为容器注册一个’event’对应的Dispatcher类。通过容器make方法直接获取事件分配类。框架中有两个EventProvider,这两个作用是完全不一样的  Illuminate\Events\EventServi">
+<meta name="keywords" content="event服务,eventDispatcher">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Event-服务">
+<meta property="og:url" content="http://blog.uncocity.com/event-provider.html">
+<meta property="og:site_name" content="laravel源码学习">
+<meta property="og:description" content="Event事件服务是框架中必要重要的一部分，其中也会用到Queue类，Broadcast类，这也是一种设计模式，叫观察者模式。 Dispatcher通过EventProvider为容器注册一个’event’对应的Dispatcher类。通过容器make方法直接获取事件分配类。框架中有两个EventProvider,这两个作用是完全不一样的  Illuminate\Events\EventServi">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-08-05T08:24:46.993Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Event-服务">
+<meta name="twitter:description" content="Event事件服务是框架中必要重要的一部分，其中也会用到Queue类，Broadcast类，这也是一种设计模式，叫观察者模式。 Dispatcher通过EventProvider为容器注册一个’event’对应的Dispatcher类。通过容器make方法直接获取事件分配类。框架中有两个EventProvider,这两个作用是完全不一样的  Illuminate\Events\EventServi">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.uncocity.com/event-provider.html"/>
+
+
+
+
+
+  <title>Event-服务 | laravel源码学习</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://your-url" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">laravel源码学习</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.uncocity.com/event-provider.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="mey">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laravel源码学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Event-服务</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-04T22:34:15+08:00">
+                2018-08-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/laravel源码学习分享/" itemprop="url" rel="index">
+                    <span itemprop="name">laravel源码学习分享</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,022
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  5
+                </span>
+              
+            </div>
+          
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <div class="note success"><p>Event事件服务是框架中必要重要的一部分，其中也会用到Queue类，Broadcast类，这也是一种设计模式，叫观察者模式。</p></div>
+<h5 id="Dispatcher"><a href="#Dispatcher" class="headerlink" title="Dispatcher"></a>Dispatcher</h5><p>通过EventProvider为容器注册一个’event’对应的Dispatcher类。通过容器make方法直接获取事件分配类。<font color="red">框架中有两个EventProvider,这两个作用是完全不一样的</font></p>
+<ul>
+<li><p>Illuminate\Events\EventServiceProvider，其注册是在Application的基本服务注册方法里</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Application, 在App类实例化时就已经注册了。</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">registerBaseServiceProviders</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;register(<span class="keyword">new</span> EventServiceProvider(<span class="keyword">$this</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">$this</span>-&gt;register(<span class="keyword">new</span> RoutingServiceProvider(<span class="keyword">$this</span>));</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">register</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;app-&gt;singleton(<span class="string">'events'</span>, <span class="function"><span class="keyword">function</span> <span class="params">($app)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="keyword">new</span> Dispatcher($app))-&gt;setQueueResolver(<span class="function"><span class="keyword">function</span> <span class="params">()</span> <span class="title">use</span> <span class="params">($app)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> $app-&gt;make(<span class="string">'Illuminate\Contracts\Queue\Factory'</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>可以看到，这里将event绑定为Dispatcher类，并同时为Dispatcher设置类一个获取Queue(队列)工厂类的闭包。我们框架中的event()实质就是用来处理具体事件的分配器Dispatcher类。</p>
+</li>
+<li><p>App\Providers\EventServiceProvider，在config/app配置的provider数组中注册。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//继承</span></span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Foundation</span>\<span class="title">Support</span>\<span class="title">Providers</span>\<span class="title">EventServiceProvider</span> <span class="title">as</span> <span class="title">ServiceProvider</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EventServiceProvider</span> <span class="keyword">extends</span> <span class="title">ServiceProvider</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> $listen = [</span><br><span class="line">        <span class="string">'App\Events\TestEvent'</span> =&gt; [</span><br><span class="line">            <span class="string">'App\Listeners\TestListener1@test'</span>,</span><br><span class="line">            <span class="string">'App\Listeners\TestListener2'</span></span><br><span class="line">        ],</span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">boot</span><span class="params">(DispatcherContract $events)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">parent</span>::boot($events);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个类是继承Support\Providers\EventServiceProvider类的，关注点在其boot方法中。在框架所有服务注册完毕，并准备启动是，就会执行所有服务的Boot方法。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">boot</span><span class="params">(DispatcherContract $events)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">foreach</span> (<span class="keyword">$this</span>-&gt;listen <span class="keyword">as</span> $event =&gt; $listeners) &#123;</span><br><span class="line">            <span class="keyword">foreach</span> ($listeners <span class="keyword">as</span> $listener) &#123;</span><br><span class="line">                $events-&gt;listen($event, $listener);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//订阅</span></span><br><span class="line">        <span class="keyword">foreach</span> (<span class="keyword">$this</span>-&gt;subscribe <span class="keyword">as</span> $subscriber) &#123;</span><br><span class="line">            $events-&gt;subscribe($subscriber);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>如上，在$listen数组中注册一个事件，并使用两个监听者。在执行boot方法时，使用循环遍历的方法，逐个将事件及其监听者传入Dispatcher的listen方法。假设我们当前的例子是不进队列，也不广播的，只走最简单的流程。</p>
+</li>
+</ul>
+<h5 id="Dispatcher-listen"><a href="#Dispatcher-listen" class="headerlink" title="Dispatcher listen"></a>Dispatcher listen</h5><p>将$listen数组中的事件存入Dispatcher中的listeners属性中<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">listen</span><span class="params">($events, $listener, $priority = <span class="number">0</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">foreach</span> ((<span class="keyword">array</span>) $events <span class="keyword">as</span> $event) &#123;</span><br><span class="line">    	<span class="comment">//如果含通配符</span></span><br><span class="line">        <span class="keyword">if</span> (Str::contains($event, <span class="string">'*'</span>)) &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;setupWildcardListen($event, $listener);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;listeners[$event][$priority][] = <span class="keyword">$this</span>-&gt;makeListener($listener);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">unset</span>(<span class="keyword">$this</span>-&gt;sorted[$event]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>含通配符的事件，存入wildcards数组中，这里主要说常用的。可以看到listeners中一个事件名对应的监听者是数组。按我们的例子就是<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//这里的0是事件优先级的排序，默认都为0</span></span><br><span class="line"><span class="keyword">$this</span>-&gt;listeners[<span class="string">'App\Events\TestEvent'</span>][<span class="number">0</span>] = [</span><br><span class="line">	<span class="keyword">$this</span>-&gt;makeListener(<span class="string">'App\Listeners\TestListener1@test'</span>),</span><br><span class="line">	<span class="keyword">$this</span>-&gt;makeListener(<span class="string">'App\Listeners\TestListener2'</span>)</span><br><span class="line">];</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">createClassListener</span><span class="params">($listener)</span></span></span><br><span class="line"><span class="function">   </span>&#123;</span><br><span class="line">       $container = <span class="keyword">$this</span>-&gt;container;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="params">()</span> <span class="title">use</span> <span class="params">($listener, $container)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">return</span> call_user_func_array(</span><br><span class="line">               <span class="keyword">$this</span>-&gt;createClassCallable($listener, $container), func_get_args()</span><br><span class="line">           );</span><br><span class="line">       &#125;;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">createClassCallable</span><span class="params">($listener, $container)</span></span></span><br><span class="line"><span class="function">   </span>&#123;	</span><br><span class="line">   	<span class="comment">//首先进行字符串解析，App\Listeners\TestListener1@test对应</span></span><br><span class="line">   	<span class="comment">//$class=App\Listeners\TestListener1   $method=test</span></span><br><span class="line">       <span class="keyword">list</span>($class, $method) = <span class="keyword">$this</span>-&gt;parseClassCallable($listener);</span><br><span class="line"></span><br><span class="line">       <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;handlerShouldBeQueued($class)) &#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;createQueuedHandlerCallable($class, $method);</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">       	<span class="comment">//$method默认是handler</span></span><br><span class="line">           <span class="keyword">return</span> [$container-&gt;make($class), $method];</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>makeListener方法会返回一个用来执行 对应Listener类上对应方法的闭包。简单点就是下图，只要当App\Events\TestEvent触发，则会执行这两个函数。<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">$this</span>-&gt;listeners[<span class="string">'App\Events\TestEvent'</span>][<span class="number">0</span>] = [</span><br><span class="line">	<span class="function"><span class="keyword">function</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">new</span> App\Listeners\TestListener1 -&gt;test();<span class="comment">//自定义的test方法</span></span><br><span class="line">	&#125;,</span><br><span class="line">	<span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">new</span> App\Listeners\TestListener2 -&gt;handle(); <span class="comment">//默认方法</span></span><br><span class="line">	&#125;</span><br><span class="line">];</span><br></pre></td></tr></table></figure></p>
+<h5 id="事件触发Fire"><a href="#事件触发Fire" class="headerlink" title="事件触发Fire"></a>事件触发Fire</h5><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fire</span><span class="params">($event, $payload = [], $halt = false)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (is_object($event)) &#123;</span><br><span class="line">        <span class="keyword">list</span>($payload, $event) = [[$event], get_class($event)];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $responses = [];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (! is_array($payload)) &#123;</span><br><span class="line">        $payload = [$payload];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">$this</span>-&gt;firing[] = $event;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//判断当前事件是否需要广播</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">isset</span>($payload[<span class="number">0</span>]) &amp;&amp; $payload[<span class="number">0</span>] <span class="keyword">instanceof</span> ShouldBroadcast) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;broadcastEvent($payload[<span class="number">0</span>]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">$this</span>-&gt;getListeners($event) <span class="keyword">as</span> $listener) &#123;</span><br><span class="line">        $response = call_user_func_array($listener, $payload);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (! is_null($response) &amp;&amp; $halt) &#123;</span><br><span class="line">            array_pop(<span class="keyword">$this</span>-&gt;firing);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> $response;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ($response === <span class="keyword">false</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        $responses[] = $response;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    array_pop(<span class="keyword">$this</span>-&gt;firing);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> $halt ? <span class="keyword">null</span> : $responses;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在来手动进行事件触发，执行event()-&gt;(‘App\Events\TestEvent’),如果是否字符串，就直接执行$this-&gt;getListeners(),然后循环执行事件处理方法(test,handle)。如果参数是实例,event()-&gt;(new \App\Events\TestEvent),则会判断该实例是否需要广播，如果是，则会另外加入广播队列。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束感谢您的阅读-------------</div>
+    
+</div>
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/event服务/" rel="tag"><i class="fa fa-tag"></i> event服务</a>
+          
+            <a href="/tags/eventDispatcher/" rel="tag"><i class="fa fa-tag"></i> eventDispatcher</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/middleware.html" rel="next" title="middleware">
+                <i class="fa fa-chevron-left"></i> middleware
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/event-queue.html" rel="prev" title="Event-队列">
+                Event-队列 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="mey" />
+            
+              <p class="site-author-name" itemprop="name">mey</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/meystory" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#Dispatcher"><span class="nav-number">1.</span> <span class="nav-text">Dispatcher</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Dispatcher-listen"><span class="nav-number">2.</span> <span class="nav-text">Dispatcher listen</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#事件触发Fire"><span class="nav-number">3.</span> <span class="nav-text">事件触发Fire</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">mey</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点字数统计&#58;</span>
+    
+    <span title="站点字数统计">17.5k</span>
+  
+</div>
+
+
+  <div class="powered-by"> <a class="theme-link" rel="external nofollow" target="_blank" href="https://hexo.io">Hexo</a> </div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" rel="external nofollow" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+
+</html>
