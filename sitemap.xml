@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.uncocity.com/event-queue.html</loc>
+    
+    <lastmod>2018-08-18T11:03:49.904Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.uncocity.com/softDelete.html</loc>
+    
+    <lastmod>2018-08-18T10:56:38.805Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.uncocity.com/about/index.html</loc>
     
     <lastmod>2018-08-16T16:45:06.938Z</lastmod>
@@ -33,13 +47,6 @@
     <loc>http://blog.uncocity.com/event-provider.html</loc>
     
     <lastmod>2018-08-16T13:33:59.799Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.uncocity.com/event-queue.html</loc>
-    
-    <lastmod>2018-08-16T13:32:28.812Z</lastmod>
     
   </url>
   

@@ -282,6 +282,199 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.uncocity.com/softDelete.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="mey">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laravel源码学习">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/softDelete.html" itemprop="url">模型软删除修改</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-18T16:21:19+08:00">
+                2018-08-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/laravel源码学习分享/" itemprop="url" rel="index">
+                    <span itemprop="name">laravel源码学习分享</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/softDelete.html" class="leancloud_visitors" data-flag-title="模型软删除修改">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,692
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  8
+                </span>
+              
+            </div>
+          
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>&emsp;&emsp;由于框架底层自带的软删除默认使用的是删除时间（默认字段名deleted_at）作来标记某条记录是否已被删除。</p>
+<ul>
+<li>存在问题:当正常执行一条查询时，第一个过滤条件就是deleted_at is null,  在mysql数据库中null是无法被建立索引的，所以在数据量大的时候，会造成很严重的查询缓慢。</li>
+<li>解决方案：修改deleted_at 字段类型为int，默认值为0，无符号，不为null，并通过存入时间戳标记是否删除。这里会涉及到模型底层的相关修改。</li>
+</ul>
+<p>在实际开发中，一般是不随意修改框架底层的，所以个人选择重写,将SoftDeletes类和SoftDeletingScope类源码复制修改即可。</p>
+<h4 id="触发原理"><a href="#触发原理" class="headerlink" title="触发原理"></a>触发原理</h4><p>当在任意一个模型中 use SoftDeletes之后，是如何在最终的查询语句里添加deleted_at=0 的,以下面模型为例<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> <span class="title">App</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">App</span>\<span class="title">Rewrites</span>\<span class="title">SoftDeletes</span>;  <span class="comment">//重写的软删除类</span></span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Database</span>\<span class="title">Eloquent</span>\<span class="title">Model</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Department</span> <span class="keyword">extends</span> <span class="title">Model</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">SoftDeletes</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> $primaryKey = <span class="string">'department_id'</span>;</span><br><span class="line">    <span class="keyword">protected</span> $table = <span class="string">'department'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/softDelete.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://blog.uncocity.com/Eloquent.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -755,7 +948,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  458
+                  523
                 </span>
               
 
@@ -790,12 +983,16 @@
 
       
         
-          
-            <div class="note success"><p>当事件监听了实现了ShouldQueue时，该事件就会通过队列进行处理。</p></div>
-<h5 id="ShouldQueue"><a href="#ShouldQueue" class="headerlink" title="ShouldQueue"></a>ShouldQueue</h5><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//实现ShouldQueue接口</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestListener1</span> <span class="keyword">implements</span> <span class="title">ShouldQueue</span></span>&#123;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">test</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">    	</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//Dipatcher执行makeListener</span></span><br><span class="line"> <span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">createClassCallable</span><span class="params">($listener, $container)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	...</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;handlerShouldBeQueued($class)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;createQueuedHandlerCallable($class, $method);</span><br><span class="line">    &#125; </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//创建队列的操作回调</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">createQueuedHandlerCallable</span><span class="params">($class, $method)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="params">()</span> <span class="title">use</span> <span class="params">($class, $method)</span> </span>&#123;</span><br><span class="line">        $arguments = <span class="keyword">$this</span>-&gt;cloneArgumentsForQueueing(func_get_args());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (method_exists($class, <span class="string">'queue'</span>)) &#123;</span><br><span class="line">        	<span class="comment">//自定义的队列操作方法</span></span><br><span class="line">            <span class="keyword">$this</span>-&gt;callQueueMethodOnHandler($class, $method, $arguments);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;resolveQueue()-&gt;push(<span class="string">'Illuminate\Events\CallQueuedHandler@call'</span>, [</span><br><span class="line">                <span class="string">'class'</span> =&gt; $class, <span class="string">'method'</span> =&gt; $method, <span class="string">'data'</span> =&gt; serialize($arguments),</span><br><span class="line">            ]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="resolveQueue"><a href="#resolveQueue" class="headerlink" title="resolveQueue"></a>resolveQueue</h5><p>resolveQueue通过执行 $app-&gt;make(‘Illuminate\Contracts\Queue\Factory’),实质获取QueueManager类。也就是执行了容器最初绑定event时，通过setQueueResolver为event赋予的闭包。<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">$this</span>-&gt;app-&gt;singleton(<span class="string">'events'</span>, <span class="function"><span class="keyword">function</span> <span class="params">($app)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">new</span> Dispatcher($app))-&gt;setQueueResolver(</span><br><span class="line">    	<span class="comment">//执行下面的闭包</span></span><br><span class="line">    	<span class="function"><span class="keyword">function</span> <span class="params">()</span> <span class="title">use</span> <span class="params">($app)</span> </span>&#123;</span><br><span class="line">        	<span class="keyword">return</span> $app-&gt;make(<span class="string">'Illuminate\Contracts\Queue\Factory'</span>);</span><br><span class="line">    	&#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure><br>说白了就是讲当前监听者类序列化， 将类名、执行方法、序列化后的数据存入队列，这里以redis为例。如执行event(new \App\Event\TestEvent())时,会在redis产生如下的数据:<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//redis_key</span></span><br><span class="line">在默认<span class="keyword">DB</span>下 queues下 的 'queues:default'中</span><br><span class="line"><span class="comment">//数据</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"job"</span>: <span class="string">"Illuminate\\Events\\CallQueuedHandler@call"</span>,</span><br><span class="line">  <span class="string">"data"</span>: &#123;</span><br><span class="line">    <span class="string">"class"</span>: <span class="string">"App\\Listeners\\TestListener1"</span>,</span><br><span class="line">    <span class="string">"method"</span>: <span class="string">"test"</span>,</span><br><span class="line">    <span class="string">"data"</span>: <span class="string">"a:1:&#123;i:0;O:20:\"</span><span class="keyword">App</span>\\Events\\TestEvent\<span class="string">":0:&#123;&#125;&#125;"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"id"</span>: <span class="string">"ihS5FJPgxxFOUdg7TxmWjErmmY2Q6PTk"</span>,</span><br><span class="line">  <span class="string">"attempts"</span>: 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>在实际开发过程有些事件的触发后不需要即时处理，那么就先放进队列，然后在出队列进行逐个处理，比如系统通知等。看到上面的json字符串，我们大概都能想到它的处理流程，最终其实也是执行了App\Listeners\TestListener1下的test方法。<br>关于出队列的处理，我们知道在命令行通过执行php artisan queue:work 就可以将这些队列任务处理完毕。</p>
-
-          
+          <div class="note success"><p>当事件监听了实现了ShouldQueue时，该事件就会通过队列进行处理。</p></div>
+<p>根据已有事件监听者，在执行Dipatcher是，在队列(redis)里为其添加该监听者的序列化数据。在任务一条条执行(出队列)，将数据解析，执行对应监听者类的方法(默认handler方法)。</p>
+<h5 id="ShouldQueue"><a href="#ShouldQueue" class="headerlink" title="ShouldQueue"></a>ShouldQueue</h5><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//实现ShouldQueue接口</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestListener1</span> <span class="keyword">implements</span> <span class="title">ShouldQueue</span></span>&#123;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">test</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">    	</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/event-queue.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1964,194 +2161,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.uncocity.com/registerProvider.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="mey">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laravel源码学习">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/registerProvider.html" itemprop="url">registerProvider</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-11T22:26:19+08:00">
-                2018-07-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/laravel源码学习分享/" itemprop="url" rel="index">
-                    <span itemprop="name">laravel源码学习分享</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/registerProvider.html" class="leancloud_visitors" data-flag-title="registerProvider">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  1,063
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  5
-                </span>
-              
-            </div>
-          
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <div class="note success"><p>框架bootstrap过程之 registerProvider。这里包括即时注册、延时注册、和事件注册服务。</p></div>
-<p>为所有已存在的服务提供者进行统一注册<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Illuminate\Foundation\Bootstrap\RegisterProviders</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">bootstrap</span><span class="params">(Application $app)</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">    $app-&gt;registerConfiguredProviders();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Illuminate\Foundation\Application</span></span><br><span class="line"> <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">registerConfiguredProviders</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $manifestPath = <span class="keyword">$this</span>-&gt;getCachedServicesPath();</span><br><span class="line"></span><br><span class="line">    (<span class="keyword">new</span> ProviderRepository(<span class="keyword">$this</span>, <span class="keyword">new</span> Filesystem, $manifestPath))</span><br><span class="line">                -&gt;load(<span class="keyword">$this</span>-&gt;config[<span class="string">'app.providers'</span>]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>首先获取需要注册的服务提供者的清单， 先读取服务提供者清单缓存，文件是位于root/bootstrap/cache下的services.json。<br>    providers保存所有需要注册的服务(config/app.php里的providers)<br>    eager保存即时注册的服务<br>    deferred保存需要延时注册服务<br>    when 保存需要条件才注册的服务<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/registerProvider.html#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2206,7 +2215,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2289,7 +2298,7 @@
     
       <span class="post-meta-item-text">站点字数统计&#58;</span>
     
-    <span title="站点字数统计">19.1k</span>
+    <span title="站点字数统计">20.9k</span>
   
 </div>
 
